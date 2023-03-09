@@ -30,23 +30,23 @@ vsrc		- Contains the verilog source files and test bench
 simulation	- Contains all simulation related files
 
 ExtMem.py	- Python script to randomly generate MxN matrix W and Nx1 matrix X.
-			  It will produce several files including ExtMem.bin, R.bin, W.mat, 
-			  X.mat and R.mat. 
+		  It will produce several files including ExtMem.bin, R.bin, W.mat, 
+		  X.mat and R.mat. 
 
 ExtMem.bin	- Contains the data that the testbench will use to initialize external memory.
-			  It holds the values of W and X which are contiguously arranged in column-major 
-			  order starting at address 0. Each entry/block of the memory is a 64-bit word which 
-			  holds a single 8/16 bit element of W or X. The testbench will read in the contents 
-			  of ExtMem.bin into the external memory at the start of simulation.
+		  It holds the values of W and X which are contiguously arranged in column-major 
+		  order starting at address 0. Each entry/block of the memory is a 64-bit word which 
+		  holds a single 8/16 bit element of W or X. The testbench will read in the contents 
+		  of ExtMem.bin into the external memory at the start of simulation.
 
 R.bin		- Contains the product of W and X in binary format. It will be read in by the
-			  test bench and used to verify the ASIC results.
+		  test bench and used to verify the ASIC results.
 
 W.mat		- Contains the values of the randomly generated MxN matrix W in human-readable,
-			  column-major format. It's provided to allow the user to inspect W manually.
+		  column-major format. It's provided to allow the user to inspect W manually.
 
 X.mat		- Contains the values of the randomly generated Nx1 matrix X in human-readable,
-			  column-major format. It's provided to allow the user to inspect X manually.
+		  column-major format. It's provided to allow the user to inspect X manually.
 
 R.mat		- Contains the values of the product of W and X in human-readable,
-			  column-major format. It's provided to allow the user to inspect R manually.
+		  column-major format. It's provided to allow the user to inspect R manually.
