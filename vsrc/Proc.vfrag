@@ -1,0 +1,111 @@
+  typedef enum logic [3:0] {IDLE, WAIT, CMD_INIT, CMD_SIZE, CMD_ADDRW, CMD_ADDRX, CMD_ADDRR, RESP} state_t;
+
+  state_t state, state_n, state_p;
+
+  always_comb
+  begin
+    case (state)
+      IDLE : 
+        if (go)
+          state_n = CMD_INIT;
+      WAIT : 
+        begin
+          cmd_valid = 1'b0;
+          case (state_p)
+            CMD_INIT  : state_n = CMD_SIZE;
+            CMD_SIZE  : state_n = CMD_ADDRW;
+            CMD_ADDRW : state_n = CMD_ADDRX;
+            CMD_ADDRX : state_n = CMD_ADDRR;
+            CMD_ADDRR : state_n = RESP;
+          endcase
+        end
+      CMD_INIT : 
+        begin
+          if (cmd_ready)
+          begin
+            cmd_valid = 1'b1;
+            cmd_inst_opcode = 7'b000_0000;
+            cmd_inst_funct  = 7'b000_0001;
+            cmd_rs1			= {32'b0, {10'b0 , k}, {10'b0 , a}};
+            state_n 		= WAIT;
+          end
+        end	
+      CMD_SIZE : 
+        begin
+          if (cmd_ready)
+          begin
+            cmd_valid = 1;
+            cmd_inst_opcode = 7'b000_0000;
+            cmd_inst_funct  = 7'b000_0010;
+            cmd_rs1			= {32'b0, {10'b0 , N}, {10'b0 , M}};
+            state_n     	= WAIT;
+          end
+        end	
+      CMD_ADDRW : 
+        begin
+          if (cmd_ready)
+          begin
+            cmd_valid = 1;
+            cmd_inst_opcode = 7'b000_0000;
+            cmd_inst_funct  = 7'b000_0100;
+            state_n 		= WAIT;
+          end
+        end	
+      CMD_ADDRX : 
+        begin
+          if (cmd_ready)
+          begin
+            cmd_valid = 1;
+            cmd_inst_opcode = 7'b000_0000;
+            cmd_inst_funct  = 7'b000_0110;
+            state_n 				= WAIT;
+          end
+        end	
+      CMD_ADDRR : 
+        begin
+          if (cmd_ready)
+          begin
+            cmd_valid = 1;
+            cmd_inst_opcode = 7'b000_0000;
+            cmd_inst_funct  = 7'b000_1000;
+            state_n 				= WAIT;
+           end
+        end	
+      RESP : 
+        begin
+          resp_ready = 1'b1;
+          if (resp_valid)
+          begin
+            state_n 				= IDLE;
+          end
+        end	
+      default :
+        begin
+          cmd_inst_opcode = 7'b000_0000;
+          cmd_inst_rd 		= 5'b0_0000;
+          cmd_inst_xs2 		= 1'b0;
+          cmd_inst_xs1 		= 1'b0;
+          cmd_inst_xd 		= 1'b0;
+          cmd_inst_rs1 		= 5'b0_0000;
+          cmd_inst_rs2 		= 5'b0_0000;
+          cmd_inst_funct  = 7'b000_0000;
+          state_n 				= IDLE;
+          cmd_valid 			= 1'b0;
+          resp_ready 			= 1'b0;
+        end
+    endcase
+  end
+
+  always @(posedge clk)
+  begin
+    if (~reset)
+    begin
+      state   <= IDLE;
+      state_p <= IDLE;
+    end
+    else
+    begin
+      state   <= state_n;
+      state_p <= state;
+    end
+  end	
