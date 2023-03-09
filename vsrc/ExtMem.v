@@ -1,6 +1,7 @@
 //---------------------------------------------------------
-//  File: Mem.v
-//  Date: March 6, 2023
+//  File:   Mem.v
+//  Author: Abel Beyene
+//  Date:   March 6, 2023
 //
 //  Description:
 //
@@ -8,21 +9,20 @@
 //  
 //  Name                    I/O     Width     Description
 //  -------------------------------------------------------
-//  clk                     input   1         Clock
-//  rst                     input   1         Reset
-//  mem_req_ready_o         input   128       Control
-//  mem_req_valid_i         input   1         Control
-//  mem_req_addr_i          output  32        Memory Address
-//  mem_req_cmd_i           output  5         Memory Operation
-//  mem_req_typ_i           output  3         Operation Size
-//  mem_req_data_i          output  64        Operation Data
-//  mem_resp_ready_i        input   128       Control
-//  mem_resp_valid_o        output  1         Control
-//  mem_resp_addr_o         output  32        Memory Address 
-//  mem_resp_cmd_o          output  5         Memory Operation
-//  mem_resp_typ_o          output  3         Operation Size
-//  mem_resp_data_o         output  64        Operation Data
-//
+//  clk                     input   1         clock
+//  rst                     input   1         reset
+//  mem_req_ready_o         input   128       control
+//  mem_req_valid_i         input   1         control
+//  mem_req_addr_i          output  32        memory address
+//  mem_req_cmd_i           output  5         memory operation
+//  mem_req_typ_i           output  3         operation size
+//  mem_req_data_i          output  64        operation data
+//  mem_resp_ready_i        input   128       control
+//  mem_resp_valid_o        output  1         control
+//  mem_resp_addr_o         output  32        memory Address 
+//  mem_resp_cmd_o          output  5         memory Operation
+//  mem_resp_typ_o          output  3         operation size
+//  mem_resp_data_o         output  64        operation data
 //---------------------------------------------------------
 
 `include "AsicDefines.vh"
@@ -31,6 +31,8 @@ module  ExtMem
 (
   input   logic        clk,
   input   logic        reset,
+    
+  // MEM REQ Interface
 
   output  logic        mem_req_ready_o,
   input   logic        mem_req_valid_i,
