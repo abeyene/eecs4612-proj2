@@ -52,7 +52,7 @@ PREPROC_DEFINES = \
 
 all : help
 
-help:
+help :
 	@echo -e "\n----------------------------- Makefile Options ---------------------------------"
 	@echo -e "\na) make setup M=X N=X - Generate a random MxN and Nx1 matrix to store in ExtMem"
 	@echo -e "b) make simulator - Build the vcs simulation executable"
@@ -68,7 +68,7 @@ setup : $(SIM_DIR)
 
 simulator : $(SIM_DIR)/$(SIM_EXE)
 
-run	: $(SIM_DIR)/$(SIM_EXE)
+run : $(SIM_DIR)/$(SIM_EXE)
 	cd $(SIM_DIR) && $(SIM_EXE) $(SIM_OPTS) +verbose +vcdplusfile=$(VPD_FILE)
 
 view : $(SIM_DIR)/$(VPD_FILE)
