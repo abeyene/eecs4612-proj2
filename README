@@ -21,7 +21,7 @@ make view
 
 ### File Descriptions
 
-Makefile    - Contains "recipes" for each step of the ASIC design flow
+Makefile        - Contains "recipes" for each step of the ASIC design flow
 
 env.sh		- Sets up the user's PATH to reference VCS and Verdi 2022
 
