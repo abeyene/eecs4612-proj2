@@ -136,7 +136,7 @@ module TestHarness;
     $display("\n");
     $display("==========================================================");
     $display("\n");
-    $display("4612 Project 2 ASIC Test Suite");
+    $display("EECS 4612 Project 2 ASIC Test Suite");
     $display("Description: Process an arbitrary matrix/vector stream set");
     $display("\n");
     $display("==========================================================");
