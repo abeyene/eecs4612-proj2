@@ -11,7 +11,7 @@
 # external memory module (W, X, R) for the ASIC 
 # test harness. The randomly generated arrays
 # are also stored in separate files (.mat) in
-# column major order for viewing.
+# row major order for viewing.
 #
 # Usage:
 #
@@ -26,7 +26,6 @@ import logging
 
 Bits = 8
 XLEN = 64
-MemSize= 2**16
 
 def main():
 
@@ -49,26 +48,26 @@ def main():
     R = numpy.matmul(W, X)
 
     with open("ExtMem.bin", 'w') as mem:
-        for w in numpy.nditer(W.T.copy(order='C')):
+        for w in numpy.nditer(W):
             mem.write(str(int(bin(w)[2:])).zfill(XLEN)+"\n")
         
-        for x in numpy.nditer(X.T.copy(order='C')):
+        for x in numpy.nditer(X):
             mem.write(str(int(bin(x)[2:])).zfill(XLEN)+"\n")
 
     with open("R.bin", 'w') as f:
-        for r in numpy.nditer(R.T.copy(order='C')):
+        for r in numpy.nditer(R):
             f.write(str(int(bin(r)[2:])).zfill(XLEN)+"\n")
 
     with open("W.mat", 'w') as f:
-        for w in numpy.nditer(W.T.copy(order='C')):
+        for w in numpy.nditer(W):
             f.write(str(w)+"\n")
  
     with open("X.mat", 'w') as f:
-        for x in numpy.nditer(X.T.copy(order='C')):
+        for x in numpy.nditer(X):
             f.write(str(x)+"\n")
 
     with open("R.mat", 'w') as f:
-        for r in numpy.nditer(R.T.copy(order='C')):
+        for r in numpy.nditer(R):
             f.write(str(r)+"\n")
 
 if __name__ == "__main__":

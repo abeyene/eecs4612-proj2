@@ -2,14 +2,14 @@
 
 ### Overview
 
-These files contain RTL, scripts, a testharness and test vectors
+This repository contains RTL, scripts, a testharness and test vectors
 for functionally verifying your custom ASIC. 
 
 ### Setup
 
-Place all your verilog files inside the vsrc directory. Make sure
-to place your top level Asic module inside the Asic.v skeleton
-module already provided to you.
+Place all your source verilog inside the vsrc directory. Also, make sure
+to place your top level Asic module inside the Asic.v skeleton file already 
+provided to you.
 
 ### Usage
 
@@ -34,7 +34,7 @@ ExtMem.py	- Python script to randomly generate MxN matrix W and Nx1 matrix X.
 		  X.mat and R.mat. 
 
 ExtMem.bin	- Contains the data that the testbench will use to initialize external memory.
-		  It holds the values of W and X which are contiguously arranged in column-major 
+		  It holds the values of W and X which are contiguously arranged in row-major 
 		  order starting at address 0. Each entry/block of the memory is a 64-bit word which 
 		  holds a single 8/16 bit element of W or X. The testbench will read in the contents 
 		  of ExtMem.bin into the external memory at the start of simulation.
@@ -43,10 +43,10 @@ R.bin		- Contains the product of W and X in binary format. It will be read in by
 		  test bench and used to verify the ASIC results.
 
 W.mat		- Contains the values of the randomly generated MxN matrix W in human-readable,
-		  column-major format. It's provided to allow the user to inspect W manually.
+		  row-major format. It's provided to allow the user to inspect W manually.
 
 X.mat		- Contains the values of the randomly generated Nx1 matrix X in human-readable,
-		  column-major format. It's provided to allow the user to inspect X manually.
+		  row-major format. It's provided to allow the user to inspect X manually.
 
 R.mat		- Contains the values of the product of W and X in human-readable,
-		  column-major format. It's provided to allow the user to inspect R manually.
+		  row-major format. It's provided to allow the user to inspect R manually.
