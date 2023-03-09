@@ -7,8 +7,8 @@
 
 module Asic
 (
-  input     logic             clk,
-  input     logic             reset,
+  input     logic                 clk,
+  input     logic                 reset,
 
   // PROC CMD Interface
                                 
@@ -36,7 +36,7 @@ module Asic
   input  	logic       	  mem_req_ready_i,
   output 	logic       	  mem_req_valid_o,
   output 	logic [39:0]      mem_req_addr_o,
-  output 	logic [4:0]		  mem_req_cmd_o,
+  output 	logic [4:0]	  mem_req_cmd_o,
   output 	logic [2:0]       mem_req_typ_o,
   output 	logic [`XLEN-1:0] mem_req_data_o,
 

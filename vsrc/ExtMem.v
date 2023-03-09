@@ -90,16 +90,16 @@ module  ExtMem
       end
       MEM_READ_REQ :
       begin
-        read_en                 = 1'b1;
-        read_addr               = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0];
-        state_n                 = MEM_READ_RESP;
+        read_en               = 1'b1;
+        read_addr             = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0];
+        state_n               = MEM_READ_RESP;
       end
       MEM_READ_RESP :
       begin
-        mem_resp_valid_o    = 1'b1;
-        mem_resp_addr_o     = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0];
-        mem_resp_cmd_o      = mem_req_cmd_i;
-        mem_resp_typ_o      = mem_req_typ_i;
+        mem_resp_valid_o      = 1'b1;
+        mem_resp_addr_o       = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0];
+        mem_resp_cmd_o        = mem_req_cmd_i;
+        mem_resp_typ_o        = mem_req_typ_i;
         case (mem_req_typ_i)
           0 : mem_resp_data_o = read_data;
           1 : mem_resp_data_o = read_data & 64'hff;
@@ -110,33 +110,33 @@ module  ExtMem
           6 : mem_resp_data_o = read_data & 64'hffffffffffff;
           7 : mem_resp_data_o = read_data & 64'hffffffffffffff;
         endcase
-        state_n                     = IDLE;
+        state_n               = IDLE;
       end
       MEM_WRITE_REQ :
       begin
-        write_en                    = 1'b1;
-        write_addr              = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0];
-        write_data              = mem_req_data_i;
+        write_en              = 1'b1;
+        write_addr            = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0];
+        write_data            = mem_req_data_i;
         state_n                     = MEM_READ_RESP;
         case (mem_req_typ_i)
-          0 : write_byte_en     = 8'b11111111;
-          1 : write_byte_en     = 8'b00000001;
-          2 : write_byte_en     = 8'b00000011;
-          3 : write_byte_en     = 8'b00000111;
-          4 : write_byte_en     = 8'b00001111;
-          5 : write_byte_en     = 8'b00011111;
-          6 : write_byte_en     = 8'b00111111;
-          7 : write_byte_en     = 8'b01111111;
+          0 : write_byte_en   = 8'b11111111;
+          1 : write_byte_en   = 8'b00000001;
+          2 : write_byte_en   = 8'b00000011;
+          3 : write_byte_en   = 8'b00000111;
+          4 : write_byte_en   = 8'b00001111;
+          5 : write_byte_en   = 8'b00011111;
+          6 : write_byte_en   = 8'b00111111;
+          7 : write_byte_en   = 8'b01111111;
         endcase
       end
       MEM_WRITE_RESP :
       begin
-        mem_resp_valid_o    = 1'b1;
-        mem_resp_addr_o     = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0];
-        mem_resp_cmd_o      = mem_req_cmd_i;
-        mem_resp_typ_o      = mem_req_typ_i;
-        mem_resp_data_o     = mem_req_data_i;   
-        state_n             = IDLE;
+        mem_resp_valid_o   = 1'b1;
+        mem_resp_addr_o    = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0];
+        mem_resp_cmd_o     = mem_req_cmd_i;
+        mem_resp_typ_o     = mem_req_typ_i;
+        mem_resp_data_o    = mem_req_data_i;   
+        state_n            = IDLE;
      end
      default :
      begin

@@ -3,27 +3,27 @@ module TestHarness;
 
   wire          cmd_ready;
   reg           cmd_valid;
-  reg [6:0]		cmd_inst_funct;
+  reg [6:0]	cmd_inst_funct;
   reg [4:0] 	cmd_inst_rs2;
   reg [4:0] 	cmd_inst_rs1;
-  reg			cmd_inst_xd;
-  reg			cmd_inst_xs1;
-  reg			cmd_inst_xs2;
-  reg [4:0]		cmd_inst_rd;
-  reg [6:0]		cmd_inst_opcode;
+  reg		cmd_inst_xd;
+  reg		cmd_inst_xs1;
+  reg		cmd_inst_xs2;
+  reg [4:0]	cmd_inst_rd;
+  reg [6:0]	cmd_inst_opcode;
   reg [63:0]	cmd_rs1;
 
   // PROC RESP Interface
 
-  reg			resp_ready;
-  reg			resp_valid;
+  reg		resp_ready;
+  reg		resp_valid;
   wire [4:0]	resp_rd;
   wire [63:0]   resp_data;
 
     // MEM REQ Interface
 
-  reg			mem_req_ready;
-  wire			mem_req_valid;
+  reg		mem_req_ready;
+  wire		mem_req_valid;
   wire [39:0]	mem_req_addr;
   wire [4:0]	mem_req_cmd;
   wire [2:0]	mem_req_typ;
@@ -31,10 +31,10 @@ module TestHarness;
 
   // MEM RESP Interface
 
-  reg			mem_resp_valid;
+  reg		mem_resp_valid;
   reg [39:0]	mem_resp_addr;
-  reg [4:0]		mem_resp_cmd;
-  reg [2:0]		mem_resp_typ;
+  reg [4:0]	mem_resp_cmd;
+  reg [2:0]	mem_resp_typ;
   reg [63:0]	mem_resp_data;
 
   Asic dut
@@ -104,11 +104,11 @@ module TestHarness;
     .mem_resp_data_o(mem_resp_data)
   );
 
-  logic [6:0]   a,	k,	M,	N;
+  logic [6:0]   a,  k,  M,  N;
   logic [39:0]	Waddr, Xaddr, Raddr;
   logic         ReLu;
   logic [63:0]	R[63:0];
-  logic 		go;
+  logic 	go;
   logic [63:0]	rd_data;
   logic [63:0]	trace_count;
   logic [255:0] desc;
@@ -128,10 +128,10 @@ module TestHarness;
 
   initial
   begin
-    clk 	= 1'b0;
+    clk	  = 1'b0;
     reset = 1'b0;
-    exit	= 0;
-    go 		= 1'b0;
+    exit  = 0;
+    go 	  = 1'b0;
     #10;
     $display("\n");
     $display("==========================================================");
