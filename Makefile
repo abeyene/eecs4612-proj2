@@ -64,7 +64,7 @@ $(SIM_DIR)/$(SIM_EXE) : $(VSRC_PATH) $(SIM_DIR)
 
 setup : $(SIM_DIR)
 	python ExtMem.py -M $(M) -N $(N) && mv *.bin $(SIM_DIR) && mv *.mat $(SIM_DIR)
-	sed -i "s/run_test(\([0-9]\{1,2\}\), \([0-9]\{1,2\}\), [0-9]\{1,2\}, [0-9]\{1,2\})/run_test(\1, \2, $(M), $(N))/" $(VSRC)/$(TEST_HARNESS)
+	sed -i "s/run_test([0-1], [0-1], \([0-9]\{1,2\}\), \([0-9]\{1,2\}\), [0-9]\{1,2\}, [0-9]\{1,2\})/run_test(\1, \2, $(M), $(N))/" $(VSRC)/$(TEST_HARNESS)
 
 simulator : $(SIM_DIR)/$(SIM_EXE)
 

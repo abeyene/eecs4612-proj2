@@ -41,7 +41,7 @@ module  ExtMem
   input   logic [2:0]  mem_req_typ_i,
   input   logic [63:0] mem_req_data_i,
 
-    // MEM RESP Interface
+  // MEM RESP Interface
 
   output  logic        mem_resp_valid_o,
   output  logic [39:0] mem_resp_addr_o,

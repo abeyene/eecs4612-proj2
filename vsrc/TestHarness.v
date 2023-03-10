@@ -105,8 +105,8 @@ module TestHarness;
   );
 
   logic [6:0]   a,  k,  M,  N;
+  logic         BitWidth, ActFun;
   logic [39:0]	Waddr, Xaddr, Raddr;
-  logic         ReLU;
   logic [63:0]	R[63:0];
   logic 	go;
   logic [63:0]	rd_data;
@@ -142,8 +142,22 @@ module TestHarness;
     $display("==========================================================");
     if (!verbose)
         $display("\n");
-    //       a  k  M  N
-    run_test(0, 1, 2, 2);
+
+    // Start Unit Tests
+    //
+    // run_test(element bitwidth, activation function, a, k, M, N)
+    //
+    // Argument             Type            Values
+    // --------------------------------------------------------------
+    // element bitwidth     boolean         0 -> 8 bits, 1 -> 16 bits
+    // activation function  boolean         0 -> SWS, 1 -> ReLU
+    // a                    logic [6:0]     1 - 64
+    // k                    logic [6:0]     1 - 64
+    // M                    logic [6:0]     1 - 64
+    // N                    logic [6:0]     1 - 64
+
+    run_test(0, 1, 7, 7);
+
 `ifdef DEBUG
   $vcdplusclose;
 `endif
@@ -195,18 +209,22 @@ module TestHarness;
 
   task run_test
   (
-    input logic [6:0] 	arg1, 
-    input logic [6:0] 	arg2, 
-    input logic [6:0] 	arg3, 
+    input logic  	arg1,
+    input logic  	arg2,
+    input logic [6:0] 	arg3,
     input logic [6:0] 	arg4
+    input logic [6:0] 	arg5
+    input logic [6:0] 	arg6
   );
   begin
     $readmemb("ExtMem.bin", extmem.sram.mem);
     exit = 0;
     if (verbose)
-        $display("\n\nTest: a=%0d k=%0d M=%0d N=%0d\n", arg1, arg2, arg3, arg4);
+        $display("\n\nTest: a=%0d k=%0d M=%0d N=%0d\n", arg3, arg4, arg5, arg6);
 
-    #2 a = arg1; k = arg2; M = arg3; N = arg4; ReLU = 1'b0; Waddr = 40'h0; Xaddr = Waddr + (arg3 * arg4) << 3; Raddr = Xaddr + (arg4 << 3);
+    #2 BitWidth = arg1; ActFun = arg2;
+    #2 a = arg3; k = arg4; M = arg5; N = arg6; 
+    #2 Waddr = 40'h0; Xaddr = Waddr + (arg5 * arg6) << 3; Raddr = Xaddr + (arg6 << 3);
     #2 reset = 1'b1;
     #2 go = 1;
 
@@ -224,10 +242,10 @@ module TestHarness;
     begin
       for (i = 0; i < M * N; i = i + 1)
       begin
-        if (extmem.sram.mem[Raddr + i*8] != ReLU ? ((R[i][7:0])>0 ? R[i][7:0] : 0) : R[i][7:0])
+        if (extmem.sram.mem[Raddr + i*8] != ReLU ? (((R[i][7:0])>>a)>0 ? ((R[i][7:0])>>a) : 0) : (R[i][7:0])>>a)
         begin
           exit = 1;
-          $display("R[%0d]=%2d. Expecting %2d]\n", i, extmem.sram.mem[Raddr + i*8], R[i]);
+          $display("R[%0d]=%2d. Expecting %2d]\n", i, extmem.sram.mem[Raddr + i*8], ((R[i][7:0])>>a));
         end
       end
     end
