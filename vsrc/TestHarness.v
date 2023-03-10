@@ -212,8 +212,8 @@ module TestHarness;
     input logic  	arg1,
     input logic  	arg2,
     input logic [6:0] 	arg3,
-    input logic [6:0] 	arg4
-    input logic [6:0] 	arg5
+    input logic [6:0] 	arg4,
+    input logic [6:0] 	arg5,
     input logic [6:0] 	arg6
   );
   begin
