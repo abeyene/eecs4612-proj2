@@ -156,7 +156,7 @@ module TestHarness;
     // M                    logic [6:0]     1 - 64
     // N                    logic [6:0]     1 - 64
 
-    run_test(0, 1, 7, 7);
+    run_test(0, 0, 0, 1, 2, 2);
 
 `ifdef DEBUG
   $vcdplusclose;
@@ -242,7 +242,7 @@ module TestHarness;
     begin
       for (i = 0; i < M * N; i = i + 1)
       begin
-        if (extmem.sram.mem[Raddr + i*8] != ReLU ? (((R[i][7:0])>>a)>0 ? ((R[i][7:0])>>a) : 0) : (R[i][7:0])>>a)
+        if (extmem.sram.mem[Raddr + i*8] != ActFun ? (((R[i][7:0])>>a)>0 ? ((R[i][7:0])>>a) : 0) : (R[i][7:0])>>a)
         begin
           exit = 1;
           $display("R[%0d]=%2d. Expecting %2d]\n", i, extmem.sram.mem[Raddr + i*8], ((R[i][7:0])>>a));
