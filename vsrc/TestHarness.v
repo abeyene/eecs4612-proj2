@@ -133,7 +133,8 @@ module TestHarness;
     reset = 1'b0;
     exit  = 0;
     go 	  = 1'b0;
-    #10;
+    trace_count = 0;
+    #200;
     $display("\n");
     $display("==========================================================");
     $display("\n");
@@ -187,9 +188,6 @@ module TestHarness;
 
   always @(posedge clk)
   begin
-    if (~reset)
-      trace_count = 0;
-    else
       trace_count = trace_count + 1;
   end
 
@@ -222,19 +220,22 @@ module TestHarness;
   );
   begin
     $readmemb("ExtMem.bin", extmem.sram.mem);
-    desc = $sformatf("Matrix/Vector Stream Set %0d", arg4);
     exit = 0;
     if (verbose)
-        $display("\n\n%0s: a=%0d k=%0d M=%0d N=%0d\n", desc, arg3, arg4, arg5, arg6);
+        $display("\nTest Parameters: a=%0d k'=%0d M=%0d N=%0d\n", arg3, arg4, arg5, arg6);
 
     #2 BitWidth = arg1; ActFun = arg2;
     #2 a = arg3; k = arg4; M = arg5; N = arg6; 
     #2 Waddr = 40'h0; Xaddr = Waddr + (arg5 * arg6) << 3; Raddr = Xaddr + (arg6 << 3);
+
     #2 reset = 1'b1;
     #2 go = 1;
+    $display("Start ...");
 
     wait (resp_valid == 1'b1);
+    $display("Finished.");
 
+    $display("\nResults:\n");
     $readmemb("R.bin", R);
     if (resp_rd_r !== 5'h1 || resp_data_r !== 64'h1)
     begin
@@ -249,7 +250,7 @@ module TestHarness;
         if (extmem.sram.mem[Raddr + i*8] !== ActFun ? (((R[i][7:0])>>a)>0 ? ((R[i][7:0])>>a) : 0) : (R[i][7:0])>>a)
         begin
           exit = 1;
-          $display("[addr=%0h][val=%0d][expected=%0d]\n", Raddr + i*8, extmem.sram.mem[Raddr + i*8], ((R[i][7:0])>>a));
+          $display("[addr=%0h][val=%0d][expected=%0d]\n", Raddr + i*8, extmem.sram.mem[Raddr + i*8], (R[i][7:0])>>a);
         end
       end
     end
