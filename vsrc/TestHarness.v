@@ -79,7 +79,7 @@ module TestHarness;
     .mem_resp_cmd_i(mem_resp_cmd),
     .mem_resp_typ_i(mem_resp_typ),
     .mem_resp_data_i(mem_resp_data)
-	);
+  );
 
   ExtMem extmem
   (
@@ -109,7 +109,8 @@ module TestHarness;
   logic [39:0]	Waddr, Xaddr, Raddr;
   logic [63:0]	R[63:0];
   logic 	go;
-  logic [63:0]	rd_data;
+  logic [4:0]	resp_rd_r;
+  logic [63:0]	resp_data_r;
   logic [63:0]	trace_count;
   logic [255:0] desc;
 
@@ -161,7 +162,7 @@ module TestHarness;
 `ifdef DEBUG
   $vcdplusclose;
 `endif
-    $display("\n");
+    $display("");
     $finish;
   end
 
@@ -203,8 +204,11 @@ module TestHarness;
 
   always @(posedge clk)
   begin
-    if (resp_valid)
-      rd_data <= resp_data;
+    if (resp_valid) 
+    begin
+      resp_rd_r <= resp_rd;
+      resp_data_r <= resp_data;
+    end
   end
 
   task run_test
@@ -218,9 +222,10 @@ module TestHarness;
   );
   begin
     $readmemb("ExtMem.bin", extmem.sram.mem);
+    desc = $sformatf("Matrix/Vector Stream Set %0d", arg4);
     exit = 0;
     if (verbose)
-        $display("\n\nTest: a=%0d k=%0d M=%0d N=%0d\n", arg3, arg4, arg5, arg6);
+        $display("\n\n%0s: a=%0d k=%0d M=%0d N=%0d\n", desc, arg3, arg4, arg5, arg6);
 
     #2 BitWidth = arg1; ActFun = arg2;
     #2 a = arg3; k = arg4; M = arg5; N = arg6; 
@@ -231,29 +236,28 @@ module TestHarness;
     wait (resp_valid == 1'b1);
 
     $readmemb("R.bin", R);
-    if (rd_data != 63'h0)
+    if (resp_rd_r != 5'h1 || resp_data_r != 64'h1)
     begin
+      exit = 1;
       if (verbose)
-        $display("[clock=%2t][rd_data=%8h]\n", $time, rd_data);
-      $display("[ failed ] %0s", desc);
-      $finish(rd_data);
+        $display("[resp_valid=1][resp_rd=%2h][resp_data=%8h]\n", resp_rd_r, resp_data_r);
     end
     else
     begin
       for (i = 0; i < M * N; i = i + 1)
       begin
-        if (extmem.sram.mem[Raddr + i*8] != ActFun ? (((R[i][7:0])>>a)>0 ? ((R[i][7:0])>>a) : 0) : (R[i][7:0])>>a)
+        if (extmem.sram.mem[Raddr + i*8] !== ActFun ? (((R[i][7:0])>>a)>0 ? ((R[i][7:0])>>a) : 0) : (R[i][7:0])>>a)
         begin
           exit = 1;
-          $display("R[%0d]=%2d. Expecting %2d]\n", i, extmem.sram.mem[Raddr + i*8], ((R[i][7:0])>>a));
+          $display("[addr=%0h][val=%0d] (expecting %2d)\n", Raddr + i*8, extmem.sram.mem[Raddr + i*8], ((R[i][7:0])>>a));
         end
       end
     end
 
     if (exit == 1)
-        $display("[ failed ] %0s", desc);
+        $display("[ failed ]");
     else
-        $display("[ passed ] %0s", desc);
+        $display("[ passed ]");
   end
   endtask
 endmodule

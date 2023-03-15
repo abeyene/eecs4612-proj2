@@ -89,6 +89,22 @@ module  ExtMem
             write_addr    = `EXTMEM_ADDR_SIZE'b0;
             write_data    = 63'b0;
           end
+         else
+         begin
+           mem_req_ready_o     = 1'b1;
+           mem_resp_valid_o    = 1'b0;
+           mem_resp_addr_o     = 1'b0;
+           mem_resp_cmd_o      = 1'b0;
+           mem_resp_typ_o      = 1'b0;
+           mem_resp_data_o     = 1'b0;
+
+           read_en             = 1'b0;
+           read_addr           = `EXTMEM_ADDR_SIZE'b0;
+           write_en            = 1'b0;
+           write_byte_en       = 1'b0;
+           write_addr          = `EXTMEM_ADDR_SIZE'b0;
+           write_data          = 63'b0;
+         end
       end
       MEM_READ_REQ :
       begin
