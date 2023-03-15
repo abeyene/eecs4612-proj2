@@ -236,7 +236,7 @@ module TestHarness;
     wait (resp_valid == 1'b1);
 
     $readmemb("R.bin", R);
-    if (resp_rd_r != 5'h1 || resp_data_r != 64'h1)
+    if (resp_rd_r !== 5'h1 || resp_data_r !== 64'h1)
     begin
       exit = 1;
       if (verbose)
@@ -249,7 +249,7 @@ module TestHarness;
         if (extmem.sram.mem[Raddr + i*8] !== ActFun ? (((R[i][7:0])>>a)>0 ? ((R[i][7:0])>>a) : 0) : (R[i][7:0])>>a)
         begin
           exit = 1;
-          $display("[addr=%0h][val=%0d] (expecting %2d)\n", Raddr + i*8, extmem.sram.mem[Raddr + i*8], ((R[i][7:0])>>a));
+          $display("[addr=%0h][val=%0d][expected=%0d]\n", Raddr + i*8, extmem.sram.mem[Raddr + i*8], ((R[i][7:0])>>a));
         end
       end
     end
