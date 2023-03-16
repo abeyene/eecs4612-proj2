@@ -1,3 +1,5 @@
+`include "Asic.v"
+
 module TestHarness;
   reg           clk, reset;
 
