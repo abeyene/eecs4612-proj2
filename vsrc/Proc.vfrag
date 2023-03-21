@@ -48,6 +48,7 @@
             cmd_valid = 1;
             cmd_inst_opcode = 7'b000_0000;
             cmd_inst_funct  = 7'b000_0100;
+            cmd_rs1	    = Waddr;
             state_n 	    = WAIT;
           end
         end	
@@ -58,6 +59,7 @@
             cmd_valid = 1;
             cmd_inst_opcode = 7'b000_0000;
             cmd_inst_funct  = 7'b000_0110;
+            cmd_rs1	    = Xaddr;
             state_n 	    = WAIT;
           end
         end	
@@ -68,6 +70,7 @@
             cmd_valid = 1;
             cmd_inst_opcode = 7'b000_0000;
             cmd_inst_funct  = 7'b000_1000;
+            cmd_rs1	    = Raddr;
             state_n 	    = WAIT;
            end
         end	

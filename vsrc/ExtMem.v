@@ -135,7 +135,7 @@ module  ExtMem
         write_en              = 1'b1;
         write_addr            = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0];
         write_data            = mem_req_data_i;
-        state_n                     = MEM_READ_RESP;
+        state_n               = MEM_WRITE_RESP;
         case (mem_req_typ_i)
           0 : write_byte_en   = 8'b11111111;
           1 : write_byte_en   = 8'b00000001;
