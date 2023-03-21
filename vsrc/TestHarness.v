@@ -106,7 +106,7 @@ module TestHarness;
     .mem_resp_data_o(mem_resp_data)
   );
 
-  logic [6:0]   a,  k,  M,  N;
+  logic [5:0]   a,  k,  M,  N;
   logic         BitWidth, ActFun;
   logic [39:0]	Waddr, Xaddr, Raddr;
   logic [63:0]	R[63:0];
