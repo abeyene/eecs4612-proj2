@@ -92,7 +92,7 @@ module  ExtMem
          begin
            mem_req_ready_o     = 1'b1;
            mem_resp_valid_o    = 1'b0;
-           mem_resp_addr_o     = 39'b0;
+           mem_resp_addr_o     = 40'b0;
            mem_resp_cmd_o      = 5'b0;
            mem_resp_typ_o      = 3'b0;
            mem_resp_data_o     = 64'b0;
@@ -162,7 +162,7 @@ module  ExtMem
      begin
        mem_req_ready_o     = 1'b1;
        mem_resp_valid_o    = 1'b0;
-       mem_resp_addr_o     = 39'b0;
+       mem_resp_addr_o     = 40'b0;
        mem_resp_cmd_o      = 5'b0;
        mem_resp_typ_o      = 3'b0;
        mem_resp_data_o     = 64'b0;
