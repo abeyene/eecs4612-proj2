@@ -77,7 +77,6 @@ module  ExtMem
       begin
           if (mem_req_ready_o & mem_req_valid_i)
           begin
-            mem_req_ready_o     = 1'b0;
             if (mem_req_cmd_i == read_cmd_lp)
               state_n = MEM_READ_REQ;
             else if (mem_req_cmd_i == write_cmd_lp)
@@ -87,29 +86,31 @@ module  ExtMem
             write_en      = 1'b0;
             write_byte_en = 1'b0;
             write_addr    = `EXTMEM_ADDR_SIZE'b0;
-            write_data    = 63'b0;
+            write_data    = 64'b0;
           end
          else
          begin
            mem_req_ready_o     = 1'b1;
            mem_resp_valid_o    = 1'b0;
-           mem_resp_addr_o     = 1'b0;
-           mem_resp_cmd_o      = 1'b0;
-           mem_resp_typ_o      = 1'b0;
-           mem_resp_data_o     = 1'b0;
+           mem_resp_addr_o     = 39'b0;
+           mem_resp_cmd_o      = 5'b0;
+           mem_resp_typ_o      = 3'b0;
+           mem_resp_data_o     = 64'b0;
 
            read_en             = 1'b0;
            read_addr           = `EXTMEM_ADDR_SIZE'b0;
            write_en            = 1'b0;
            write_byte_en       = 1'b0;
            write_addr          = `EXTMEM_ADDR_SIZE'b0;
-           write_data          = 63'b0;
+           write_data          = 64'b0;
+           state_n             = IDLE;
          end
       end
       MEM_READ_REQ :
       begin
+        mem_req_ready_o     = 1'b0;
         read_en               = 1'b1;
-        read_addr             = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0];
+        read_addr             = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0] >> 3;
         state_n               = MEM_READ_RESP;
       end
       MEM_READ_RESP :
@@ -132,8 +133,9 @@ module  ExtMem
       end
       MEM_WRITE_REQ :
       begin
+        mem_req_ready_o       = 1'b0;
         write_en              = 1'b1;
-        write_addr            = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0];
+        write_addr            = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0] >> 3;
         write_data            = mem_req_data_i;
         state_n               = MEM_WRITE_RESP;
         case (mem_req_typ_i)
@@ -160,17 +162,17 @@ module  ExtMem
      begin
        mem_req_ready_o     = 1'b1;
        mem_resp_valid_o    = 1'b0;
-       mem_resp_addr_o     = 1'b0;
-       mem_resp_cmd_o      = 1'b0;
-       mem_resp_typ_o      = 1'b0;
-       mem_resp_data_o     = 1'b0;
+       mem_resp_addr_o     = 39'b0;
+       mem_resp_cmd_o      = 5'b0;
+       mem_resp_typ_o      = 3'b0;
+       mem_resp_data_o     = 64'b0;
 
        read_en             = 1'b0;
        read_addr           = `EXTMEM_ADDR_SIZE'b0;
        write_en            = 1'b0;
        write_byte_en       = 1'b0;
        write_addr          = `EXTMEM_ADDR_SIZE'b0;
-       write_data          = 63'b0;
+       write_data          = 64'b0;
      end
     endcase
   end
