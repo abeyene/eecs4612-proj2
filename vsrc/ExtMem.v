@@ -108,7 +108,7 @@ module  ExtMem
       end
       MEM_READ_REQ :
       begin
-        mem_req_ready_o     = 1'b0;
+        mem_req_ready_o       = 1'b0;
         read_en               = 1'b1;
         read_addr             = mem_req_addr_i[`EXTMEM_ADDR_SIZE-1:0] >> 3;
         state_n               = MEM_READ_RESP;
