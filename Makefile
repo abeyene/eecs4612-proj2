@@ -8,6 +8,8 @@ else
 SEED_FLAG=+ntb_random_seed_automatic
 endif
 
+URL=https://github.com/abeyene/eecs4612-proj2.git
+
 CLOCK_PERIOD ?= 1.0
 RESET_DELAY ?= 777.7
 
@@ -58,6 +60,7 @@ help :
 	@echo -e "b) make simulator - Build the vcs simulation executable"
 	@echo -e "c) make run - Run the simulation"
 	@echo -e "d) make view - open the waveform file with DVE\n"
+	@echo -e "e) make update - update repository with remote changes\n"
 
 $(SIM_DIR)/$(SIM_EXE) : $(VSRC_PATH) $(SIM_DIR)
 	vcs $(VCS_NONCC_OPTS) $(PREPROC_DEFINES) +define+DEBUG -debug_access+all $(VSRC)/$(TEST_HARNESS) -o $@
@@ -65,6 +68,9 @@ $(SIM_DIR)/$(SIM_EXE) : $(VSRC_PATH) $(SIM_DIR)
 setup : $(SIM_DIR)
 	python ExtMem.py -M $(M) -N $(N) && mv *.bin $(SIM_DIR) && mv *.mat $(SIM_DIR)
 	sed -i "s/run_test(\([0-1]\), \([0-1]\), \([0-9]\{1,2\}\), \([0-9]\{1,2\}\), [0-9]\{1,2\}, [0-9]\{1,2\})/run_test(\1, \2, \3, \4, $(M), $(N))/" $(VSRC)/$(TEST_HARNESS)
+
+update :
+	git pull
 
 simulator : $(SIM_DIR)/$(SIM_EXE)
 

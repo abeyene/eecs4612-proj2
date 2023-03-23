@@ -19,8 +19,8 @@
 //  mem_req_data_i          output  64        operation data
 //  mem_resp_ready_i        input   128       control
 //  mem_resp_valid_o        output  1         control
-//  mem_resp_addr_o         output  32        memory Address 
-//  mem_resp_cmd_o          output  5         memory Operation
+//  mem_resp_addr_o         output  32        memory address 
+//  mem_resp_cmd_o          output  5         memory operation
 //  mem_resp_typ_o          output  3         operation size
 //  mem_resp_data_o         output  64        operation data
 //---------------------------------------------------------
