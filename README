@@ -5,10 +5,10 @@
 This repository contains RTL, scripts, a testharness and test vectors
 for functionally verifying your custom ASIC. 
 
-### Setup
+### Setup (only have to do once)
 
 source env.sh
-make setup M=m N=n
+make setup [M=m] [N=n]
 
 Place all your source verilog inside the vsrc directory. Also, make sure
 to name your top level module "Asic" and place it inside a file called Asic.v. 
