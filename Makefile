@@ -59,7 +59,7 @@ help :
 	@echo -e "\na) make setup M=X N=X - Generate a random MxN and Nx1 matrix to store in ExtMem"
 	@echo -e "b) make simulator - Build the vcs simulation executable"
 	@echo -e "c) make run - Run the simulation"
-	@echo -e "d) make view - open the waveform file with DVE\n"
+	@echo -e "d) make view - open the waveform file with DVE"
 	@echo -e "e) make update - update repository with remote changes\n"
 
 $(SIM_DIR)/$(SIM_EXE) : $(VSRC_PATH) $(SIM_DIR)
