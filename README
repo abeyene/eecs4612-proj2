@@ -7,14 +7,15 @@ for functionally verifying your custom ASIC.
 
 ### Setup
 
+source env.sh
+make setup M=m N=n
+
 Place all your source verilog inside the vsrc directory. Also, make sure
 to name your top level module "Asic" and place it inside a file called Asic.v. 
 Look at Template.v for an example of what Asic.v should look like.
 
 ### Usage
 
-source env.sh
-make setup M=m N=n
 make simulator
 make run
 make view
