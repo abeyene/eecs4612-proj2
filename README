@@ -10,9 +10,9 @@ for functionally verifying your custom ASIC.
 source env.sh
 make setup M=m N=n      (m and n should be integers) 
 
-Place all your verilog files inside the vsrc directory. Also, Make sure
-to place your top level Asic module inside the Asic.v skeleton file
-already provided to you.
+Place all your verilog files inside the vsrc directory. Also, make 
+sure to place your top level Asic module inside the Asic.v skeleton 
+file already provided to you.
 
 ### Usage
 
