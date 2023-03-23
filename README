@@ -11,8 +11,8 @@ source env.sh
 make setup M=m N=n      (m and n should be integers) 
 
 Place all your source verilog inside the vsrc directory. Also, make sure
-to name your top level module "Asic" and place it inside a file called Asic.v. 
-Use Example.v as a guide.
+to name your top level module "Asic" and place it inside a file called 
+Asic.v (use Example.v as a guide).
 
 ### Usage
 
