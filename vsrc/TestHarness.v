@@ -179,7 +179,7 @@ module TestHarness;
     if (!verbose)
         $display("\n");
 
-    // Start Unit Tests
+    // Unit Tests
     //
     // run_test(element bitwidth, activation function, a, k, M, N)
     //
@@ -246,12 +246,28 @@ module TestHarness;
   begin
     if (exit == 1)
     begin
-      $display("---------------------------------");
-      $display("address          data            ");
-      $display("---------------------------------");
+      $display("-------------------------------------");
+      $display("address       data                   ");
+      $display("-------------------------------------");
       for (i = 0; i < (M*N + N + M); i = i + 1)
-        #2 $display("%2h               %16h", i*8, extmem.sram.mem[i]);
-      $display("---------------------------------");
+        #2 $display("%2h            %1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h", i*8, 
+                                    extmem.sram.mem[i][63:60],
+                                    extmem.sram.mem[i][59:56],
+                                    extmem.sram.mem[i][55:52],
+                                    extmem.sram.mem[i][51:48],
+                                    extmem.sram.mem[i][47:44],
+                                    extmem.sram.mem[i][43:40],
+                                    extmem.sram.mem[i][39:36],
+                                    extmem.sram.mem[i][35:32],
+                                    extmem.sram.mem[i][31:28],
+                                    extmem.sram.mem[i][27:24],
+                                    extmem.sram.mem[i][23:20],
+                                    extmem.sram.mem[i][19:16],
+                                    extmem.sram.mem[i][15:12],
+                                    extmem.sram.mem[i][11:8],
+                                    extmem.sram.mem[i][7:4],
+                                    extmem.sram.mem[i][3:0]);
+      $display("-------------------------------------");
       $display("");
       if (fail == 1)
         $display("[ failed ]");
