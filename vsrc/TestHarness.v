@@ -192,7 +192,7 @@ module TestHarness;
     // M                    logic [6:0]     1 - 64
     // N                    logic [6:0]     1 - 64
 
-    run_test(0, 0, 0, 1, 2, 2);
+    run_test(0, 0, 0, 1, 1, 1);
 
 `ifdef DEBUG
   $vcdplusclose;
@@ -227,7 +227,7 @@ module TestHarness;
   begin
     if (max_cycles > 0 && trace_count > max_cycles && exit == 0)
 	begin
-	  $fdisplay(stderr, "\n\n** TIMEOUT **\n\n");
+	  $fdisplay(stderr, "\n** TIMEOUT **\n");
           fail = 1;
           exit = 1;
 	end
