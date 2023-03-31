@@ -24,7 +24,7 @@
           if (cmd_ready)
           begin
             cmd_valid = 1'b1;
-            cmd_inst_opcode = (ActFun >> 1) & BitWidth;
+            cmd_inst_opcode = (actfun >> 1) & bitwidth;
             cmd_inst_funct  = 7'b000_0001;
             cmd_rs1	    = {32'b0, {10'b0 , k}, {10'b0 , a}};
             state_n 	    = WAIT;

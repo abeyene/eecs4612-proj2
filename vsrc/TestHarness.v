@@ -106,8 +106,10 @@ module TestHarness;
     .mem_resp_data_o(mem_resp_data)
   );
 
-  logic [5:0]   a,  k,  M,  N;
-  logic         BitWidth, ActFun;
+  logic [5:0]   k,  M,  N;
+  logic [6:0]   a;
+  logic         bitwidth; 
+  logic [1:0]   actfun;
   logic [39:0]	Waddr, Xaddr, Raddr;
   logic [63:0]	R[63:0];
   logic 	go;
@@ -116,11 +118,11 @@ module TestHarness;
   logic [63:0]	trace_count;
   logic [255:0] desc;
 
-  integer i;	
+  logic [15:0]  exp_subword, asic_subword;
+  logic [15:0]  exp_result, asic_result;
+  integer i = 0;
 
-  `include "Proc.vfrag"
-
-  reg exit;
+  reg exit, fail;
   reg [1023:0] 	vcdplusfile = 0;
   reg [1023:0] 	vcdfile = 0;
   reg          	stats_active = 0;
@@ -128,12 +130,42 @@ module TestHarness;
   reg          	verbose = 0;
   reg [31:0]   	max_cycles = 0;
   integer      	stderr = 32'h80000002;
+ 
+  `include "Proc.vfrag"
+
+  assign exp_subword  = R[i]>>a;
+  assign asic_subword = extmem.sram.mem[(Raddr>>3) + i];
+
+  always_comb
+  begin
+    if (bitwidth)
+    begin
+      case (actfun)
+        2'b00 : exp_result = exp_subword[15:0];
+        2'b01 : exp_result = exp_subword[15:0] > 0 ? exp_subword[15:0] : 0;
+        2'b10 : exp_result = $atan(exp_subword[15:0] > 0 ? exp_subword[15:0] : 0);
+        default : exp_result = 16'hxxxx;
+      endcase
+    end
+    else
+    begin
+      case (actfun)
+        2'b00 : exp_result = exp_subword[7:0];
+        2'b01 : exp_result = exp_subword[7:0] > 0 ? exp_subword[7:0] : 0;
+        2'b10 : exp_result = $atan(exp_subword[7:0] > 0 ? exp_subword[7:0] : 0);
+        default : exp_result = 8'hxxxx;
+      endcase
+    end
+  end
+
+  assign asic_result = bitwidth ? asic_subword[15:0] : {8'h00, asic_subword[7:0]};
 
   initial
   begin
     clk	  = 1'b0;
     reset = 1'b0;
     exit  = 0;
+    fail  = 0;
     go 	  = 1'b0;
     trace_count = 0;
     #200;
@@ -154,19 +186,17 @@ module TestHarness;
     // Argument             Type            Values
     // --------------------------------------------------------------
     // element bitwidth     boolean         0 -> 8 bits, 1 -> 16 bits
-    // activation function  boolean         0 -> SWS, 1 -> ReLU
+    // activation function  logic [1:0]     2'b00 -> SWS, 2'b01 -> ReLU, 2'b10 -> arctan
     // a                    logic [6:0]     1 - 64
     // k                    logic [6:0]     1 - 64
     // M                    logic [6:0]     1 - 64
     // N                    logic [6:0]     1 - 64
-
+                                                                                                                        df
     run_test(0, 0, 0, 1, 2, 2);
 
 `ifdef DEBUG
   $vcdplusclose;
 `endif
-    $display("");
-    $finish;
   end
 
   initial
@@ -195,10 +225,11 @@ module TestHarness;
 
   always @(posedge clk)
   begin
-    if (max_cycles > 0 && trace_count > max_cycles)
+    if (max_cycles > 0 && trace_count > max_cycles && exit == 0)
 	begin
-	  $fdisplay(stderr, "\n** TIMEOUT **\n\n");
-	  $finish(1);
+	  $fdisplay(stderr, "\n\n** TIMEOUT **\n\n");
+          fail = 1;
+          exit = 1;
 	end
   end
 
@@ -211,10 +242,30 @@ module TestHarness;
     end
   end
 
+  always @(posedge clk)
+  begin
+    if (exit == 1)
+    begin
+      $display("---------------------------------");
+      $display("address          data            ");
+      $display("---------------------------------");
+      for (i = 0; i < (M*N + N + M); i = i + 1)
+        #2 $display("%2h               %16h", i*8, extmem.sram.mem[i]);
+      $display("---------------------------------");
+      $display("");
+      if (fail == 1)
+        $display("[ failed ]");
+      else
+        $display("[ passed ]");
+      $display("");
+      $finish();
+    end
+  end
+
   task run_test
   (
     input logic  	arg1,
-    input logic  	arg2,
+    input logic [1:0] 	arg2,
     input logic [6:0] 	arg3,
     input logic [6:0] 	arg4,
     input logic [6:0] 	arg5,
@@ -222,11 +273,10 @@ module TestHarness;
   );
   begin
     $readmemb("ExtMem.bin", extmem.sram.mem);
-    exit = 0;
     if (verbose)
         $display("\nTest Parameters: a=%0d k'=%0d M=%0d N=%0d\n", arg3, arg4, arg5, arg6);
 
-    #2 BitWidth = arg1; ActFun = arg2;
+    #2 bitwidth = arg1; actfun = arg2;
     #2 a = arg3; k = arg4; M = arg5; N = arg6; 
     #2 Waddr = 40'h0; Xaddr = Waddr + (arg5 * arg6) << 3; Raddr = Xaddr + (arg6 << 3);
 
@@ -238,29 +288,24 @@ module TestHarness;
     $display("Finished.");
 
     $display("\nResults:\n");
-    $readmemb("R.bin", R);
+    $readmemb("R.bin", R); #2;
+
     if (resp_rd_r !== 5'h1 || resp_data_r !== 64'h1)
     begin
-      exit = 1;
+      fail = 1; exit = 1;
       if (verbose)
         $display("[resp_valid=1][resp_rd=%2h][resp_data=%8h]\n", resp_rd_r, resp_data_r);
     end
     else
     begin
-      for (i = 0; i < M * N; i = i + 1)
+      for (i = 0; i < M; i = i + 1)
       begin
-        if (extmem.sram.mem[Raddr + i*8] !== ActFun ? (((R[i][7:0])>>a)>0 ? ((R[i][7:0])>>a) : 0) : (R[i][7:0])>>a)
-        begin
-          exit = 1;
-          $display("[addr=%0h][val=%0d][expected=%0d]\n", Raddr + i*8, extmem.sram.mem[Raddr + i*8], (R[i][7:0])>>a);
-        end
+        #2;
+        if (exp_result !== asic_result)
+          fail = 1;
       end
+      exit = 1;
     end
-
-    if (exit == 1)
-        $display("[ failed ]");
-    else
-        $display("[ passed ]");
   end
   endtask
 endmodule
