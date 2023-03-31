@@ -70,6 +70,7 @@ setup : $(SIM_DIR)
 	@sed -i "s/run_test(\([0-1]\), \([0-1]\), \([0-9]\{1,2\}\), \([0-9]\{1,2\}\), [0-9]\{1,2\}, [0-9]\{1,2\})/run_test(\1, \2, \3, \4, $(M), $(N))/" $(VSRC)/$(TEST_HARNESS)
 
 update :
+	git checkout vsrc/TestHarness.v
 	git pull
 
 simulator : $(SIM_DIR)/$(SIM_EXE)
