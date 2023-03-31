@@ -7,14 +7,26 @@ for functionally verifying your custom ASIC.
 
 ### Setup (only have to do once)
 
+To get started, run the following two commands to setup your path 
+and create random test data:
+
 source env.sh
 make setup M=m N=n      (m and n should be integers) 
 
 Place all your verilog files inside the vsrc directory. Also, make 
 sure to place your top level Asic module inside the Asic.v skeleton 
-file already provided to you.
+file already provided to you inside vsrc.
+
+Note: Occasionally, updates will be posted to the remote GitHub repository.
+To update your local files,  run the following two commands:
+
+make update
+make setup M=m N=n      (m and n should be integers) 
 
 ### Usage
+
+After you're verilog has been written, run a simulation and view the 
+waveform results by running the following three commands:
 
 make simulator
 make run

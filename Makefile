@@ -62,14 +62,14 @@ help :
 	@echo -e "d) make view - open the waveform file with DVE"
 	@echo -e "e) make update - update repository with remote changes\n"
 
-$(SIM_DIR)/$(SIM_EXE) : $(VSRC_PATH) $(SIM_DIR)
+$(SIM_DIR)/$(SIM_EXE) : clean $(VSRC_PATH) $(SIM_DIR)
 	vcs $(VCS_NONCC_OPTS) $(PREPROC_DEFINES) +define+DEBUG -debug_access+all $(VSRC)/$(TEST_HARNESS) -o $@
 
 setup : $(SIM_DIR)
 	python ExtMem.py -M $(M) -N $(N) && mv *.bin $(SIM_DIR) && mv *.mat $(SIM_DIR)
 	@sed -i "s/run_test(\([0-1]\), \([0-1]\), \([0-9]\{1,2\}\), \([0-9]\{1,2\}\), [0-9]\{1,2\}, [0-9]\{1,2\})/run_test(\1, \2, \3, \4, $(M), $(N))/" $(VSRC)/$(TEST_HARNESS)
 
-update :
+update : clean
 	git checkout vsrc/TestHarness.v
 	git pull
 
