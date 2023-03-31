@@ -24,7 +24,7 @@ import os
 import sys
 import logging
 
-Bits = 16
+Bits = 8
 XLEN = 64
 
 def main():
