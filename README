@@ -17,12 +17,6 @@ Place all your verilog files inside the vsrc directory. Also, make
 sure to place your top level Asic module inside the Asic.v skeleton 
 file already provided to you inside vsrc.
 
-Note: Occasionally, updates will be posted to the remote GitHub repository.
-To update your local files,  run the following two commands:
-
-make update
-make setup M=m N=n      (m and n should be integers) 
-
 ### Usage
 
 After you're verilog has been written, run a simulation and view the 
