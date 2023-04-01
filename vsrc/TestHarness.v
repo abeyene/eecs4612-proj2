@@ -117,9 +117,11 @@ module TestHarness;
   logic [63:0]	trace_count;
   logic [255:0] desc;
 
-  logic [15:0]  exp_subword, asic_subword;
-  logic [15:0]  exp_result, asic_result;
-  integer i = 0;
+  logic [15:0]  exp_subword, exp_result;
+  logic [15:0]  asic_subword, asic_result;
+  logic [63:0]  asic_word;
+
+  integer i;
   integer wblocks;
   integer xblocks;
   integer rblocks;
@@ -136,7 +138,7 @@ module TestHarness;
   `include "Proc.vfrag"
 
   assign exp_subword  = R[i]>>a;
-  assign asic_subword = extmem.sram.mem[(Raddr>>3) + i];
+  assign asic_word = extmem.sram.mem[(Raddr>>3) + (i / (k ? k : bitwidth ? 4 : 8))];
 
   always_comb
   begin
@@ -160,7 +162,8 @@ module TestHarness;
     end
   end
 
-  assign asic_result = bitwidth ? asic_subword[15:0] : {8'h00, asic_subword[7:0]};
+  assign asic_subword = asic_word>>((i % (k ? k : bitwidth ? 4 : 8))*(bitwidth ? 16 : 8));
+  assign asic_result = bitwidth ? asic_subword[15:0] : asic_subword[7:0];
 
   initial
   begin
@@ -251,9 +254,9 @@ module TestHarness;
       $display("-------------------------------------");
       $display("address       data                   ");
       $display("-------------------------------------");
-      wblocks = k ? (M*N) % k ? (M*N) / k + 1 : (M*N) / k : (M*N) % 8 ? (M*N) / 8 + 1 : (M*N) / 8; #2;
-      xblocks = k ? N % k ? N / k + 1 : N / k : N % 8 ? N / 8 + 1 : N / 8; #2;
-      rblocks = k ? M % k ? M / k + 1 : M / k : M % 8 ? M / 8 + 1 : M / 8; #2;
+      wblocks = k ? (M*N) % k ? (M*N) / k + 1 : (M*N) / k : (M*N) % (bitwidth ? 4 : 8) ? (M*N) / (bitwidth ? 4 : 8) + 1 : (M*N) / (bitwidth ? 4 : 8); #2;
+      xblocks = k ? N % k ? N / k + 1 : N / k : N % (bitwidth ? 4 : 8) ? N / (bitwidth ? 4 : 8) + 1 : N / (bitwidth ? 4 : 8); #2;
+      rblocks = k ? M % k ? M / k + 1 : M / k : M % (bitwidth ? 4 : 8) ? M / (bitwidth ? 4 : 8) + 1 : M / (bitwidth ? 4 : 8); #2;
       for (i = 0; i < (wblocks + xblocks + rblocks); i = i + 1)
         #2 $display("%2h            %1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h", i*8, 
                                     extmem.sram.mem[i][63:60],
@@ -295,7 +298,7 @@ module TestHarness;
   begin
     $readmemb("ExtMem.bin", extmem.sram.mem);
     if (verbose)
-        $display("\nTest Parameters: a=%0d k'=%0d M=%0d N=%0d\n", arg3, arg4, arg5, arg6);
+        $display("\nTest Parameters: bitwidth=%0d actfun=%0d a=%0d k'=%0d M=%0d N=%0d\n", arg1 ? 16 : 8, arg2, arg3, arg4, arg5, arg6);
 
     #2 bitwidth = arg1; actfun = arg2;
     #2 a = arg3; k = arg4; M = arg5; N = arg6; 

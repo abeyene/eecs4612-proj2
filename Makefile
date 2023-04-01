@@ -16,6 +16,7 @@ RESET_DELAY ?= 777.7
 M ?= 2
 N ?= 2
 k ?= 1
+b ?= 0
 
 VSRC = vsrc
 TEST_HARNESS = TestHarness.v
@@ -67,8 +68,8 @@ $(SIM_DIR)/$(SIM_EXE) : clean $(VSRC_PATH) $(SIM_DIR)
 	vcs $(VCS_NONCC_OPTS) $(PREPROC_DEFINES) +define+DEBUG -debug_access+all $(VSRC)/$(TEST_HARNESS) -o $@
 
 setup : $(SIM_DIR)
-	python ExtMem.py -M $(M) -N $(N) -k $(k) && mv *.bin $(SIM_DIR) && mv *.mat $(SIM_DIR)
-	@sed -i "s/run_test(\([0-1]\), \([0-2]\), \([0-9]\{1,2\}\), \([0-7]\), [0-9]\{1,2\}, [0-9]\{1,2\})/run_test(\1, \2, \3, $(k), $(M), $(N))/" $(VSRC)/$(TEST_HARNESS)
+	python ExtMem.py -M $(M) -N $(N) -k $(k) -b $(b) && mv *.bin $(SIM_DIR) && mv *.mat $(SIM_DIR)
+	@sed -i "s/run_test(\([0-1]\), \([0-2]\), \([0-9]\{1,2\}\), \([0-7]\), [0-9]\{1,2\}, [0-9]\{1,2\})/run_test($(b), \2, \3, $(k), $(M), $(N))/" $(VSRC)/$(TEST_HARNESS)
 
 update : 
 	git checkout vsrc/TestHarness.v

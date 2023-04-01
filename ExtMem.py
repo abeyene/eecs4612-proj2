@@ -31,7 +31,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate memory contents (W, X, R) of ExtMem", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("-M", type=int, default=2, help="Dimension M")
     parser.add_argument("-N", type=int, default=2, help="Dimension N")
-    parser.add_argument("-b", "--bitwidth", type=int, default=8, help="Element Bitwidth")
+    parser.add_argument("-b", "--bitwidth", type=int, default=0, help="Element Bitwidth")
     parser.add_argument("-k", type=int, default=1, help="Arrangement of W and X in memory")
     parser.add_argument("-f", "--force", action="store_true", default=False, help="Override existing memory")
     args = parser.parse_args()
@@ -40,12 +40,16 @@ def main():
         logging.error("Invalid value for M or N (must be integers between 1 and 64)")
         sys.exit(1)
 
-    if args.bitwidth != 8 and args.bitwidth != 16:
-        logging.error("Invalid value for b (must be 8 or 16)")
+    if args.bitwidth != 0 and args.bitwidth != 1:
+        logging.error("Invalid value for b (must be 0 or 1)")
         sys.exit(1)
 
     if args.k < 0 or args.k > 7:
         logging.error("Invalid value for k (must be integer between 0 and 7)")
+        sys.exit(1)
+    
+    if args.bitwidth == 1 and args.k > 3:
+        logging.error("Invalid value for k with 16 bit elements (must be integer between 0 and 3)")
         sys.exit(1)
 
     if not args.force:
@@ -53,37 +57,39 @@ def main():
             logging.error("ExtMem.bin already exists. Re-run with -f/--force to override it.")
             sys.exit(1)
 
-    W = numpy.random.randint(0, 2**args.bitwidth - 1, (args.M, args.N))
-    X = numpy.random.randint(0, 2**args.bitwidth - 1, (args.N, 1))
+    b = 16 if args.bitwidth else 8
+
+    W = numpy.random.randint(0, 2**b - 1, (args.M, args.N))
+    X = numpy.random.randint(0, 2**b - 1, (args.N, 1))
     R = numpy.matmul(W, X)
 
-    k = args.k if args.k else 8
+    k = args.k if args.k else XLEN//b
 
     with open("ExtMem.bin", 'w') as mem:
         for index in range((args.M*args.N) // k):
             line = ''
             for w in numpy.ndarray.flatten(W)[index*k:(index+1)*k]:
-                line = str(int(bin(w)[2:])).zfill(args.bitwidth) + line
+                line = str(int(bin(w)[2:])).zfill(b) + line
 
             mem.write(line.zfill(XLEN) + "\n")
 
         if (args.M*args.N % k):
             line = ''
             for w in numpy.ndarray.flatten(W)[(args.M*args.N) // k : (args.M*args.N) // k + args.M*args.N % k]:
-                line = str(int(bin(w)[2:])).zfill(args.bitwidth) + line
+                line = str(int(bin(w)[2:])).zfill(b) + line
             mem.write(line.zfill(XLEN) + "\n")
 
         for index in range(int(args.N/k)):
             line = ''
             for x in numpy.ndarray.flatten(X)[index*k:(index+1)*k]:
-                line = str(int(bin(x)[2:])).zfill(args.bitwidth) + line
+                line = str(int(bin(x)[2:])).zfill(b) + line
 
             mem.write(line.zfill(XLEN) + "\n")
 
         if (args.N % k):
             line = ''
             for x in numpy.ndarray.flatten(X)[args.N // k : args.N // k + args.N % k]:
-                line = str(int(bin(x)[2:])).zfill(args.bitwidth) + line
+                line = str(int(bin(x)[2:])).zfill(b) + line
             mem.write(line.zfill(XLEN) + "\n")
 
     with open("R.bin", 'w') as f:
