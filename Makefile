@@ -66,8 +66,8 @@ help :
 $(SIM_DIR)/$(SIM_EXE) : clean $(VSRC_PATH) $(SIM_DIR)
 	vcs $(VCS_NONCC_OPTS) $(PREPROC_DEFINES) +define+DEBUG -debug_access+all $(VSRC)/$(TEST_HARNESS) -o $@
 
-setup : $(SIM_DIR) update
-	python ExtMem.py -M $(M) -N $(N) && mv *.bin $(SIM_DIR) && mv *.mat $(SIM_DIR)
+setup : $(SIM_DIR)
+	python ExtMem.py -M $(M) -N $(N) -k $(k) && mv *.bin $(SIM_DIR) && mv *.mat $(SIM_DIR)
 	@sed -i "s/run_test(\([0-1]\), \([0-2]\), \([0-9]\{1,2\}\), \([0-7]\), [0-9]\{1,2\}, [0-9]\{1,2\})/run_test(\1, \2, \3, $(k), $(M), $(N))/" $(VSRC)/$(TEST_HARNESS)
 
 update : 

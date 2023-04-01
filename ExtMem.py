@@ -38,19 +38,20 @@ def main():
 
     if args.M < 1 or args.M > 64 or args.N < 1 or args.N > 64:
         logging.error("Invalid value for M or N (must be integers between 1 and 64)")
-        sys.exit(RET_FAIL)
+        sys.exit(1)
 
     if args.bitwidth != 8 and args.bitwidth != 16:
         logging.error("Invalid value for b (must be 8 or 16)")
-        sys.exit(RET_FAIL)
+        sys.exit(1)
 
     if args.k < 0 or args.k > 7:
         logging.error("Invalid value for k (must be integer between 0 and 7)")
-        sys.exit(RET_FAIL)
+        sys.exit(1)
 
     if not args.force:
         if(os.path.isfile("ExtMem.bin")):
             logging.error("ExtMem.bin already exists. Re-run with -f/--force to override it.")
+            sys.exit(1)
 
     W = numpy.random.randint(0, 2**args.bitwidth - 1, (args.M, args.N))
     X = numpy.random.randint(0, 2**args.bitwidth - 1, (args.N, 1))

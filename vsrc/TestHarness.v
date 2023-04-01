@@ -120,6 +120,9 @@ module TestHarness;
   logic [15:0]  exp_subword, asic_subword;
   logic [15:0]  exp_result, asic_result;
   integer i = 0;
+  integer wblocks;
+  integer xblocks;
+  integer rblocks;
 
   reg exit, fail;
   reg [1023:0] 	vcdplusfile = 0;
@@ -248,7 +251,10 @@ module TestHarness;
       $display("-------------------------------------");
       $display("address       data                   ");
       $display("-------------------------------------");
-      for (i = 0; i < (M*N + N + M); i = i + 1)
+      wblocks = k ? (M*N) % k ? (M*N) / k + 1 : (M*N) / k : (M*N) % 8 ? (M*N) / 8 + 1 : (M*N) / 8; #2;
+      xblocks = k ? N % k ? N / k + 1 : N / k : N % 8 ? N / 8 + 1 : N / 8; #2;
+      rblocks = k ? M % k ? M / k + 1 : M / k : M % 8 ? M / 8 + 1 : M / 8; #2;
+      for (i = 0; i < (wblocks + xblocks + rblocks); i = i + 1)
         #2 $display("%2h            %1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h", i*8, 
                                     extmem.sram.mem[i][63:60],
                                     extmem.sram.mem[i][59:56],
@@ -300,7 +306,7 @@ module TestHarness;
     $display("Start ...");
 
     wait (resp_valid == 1'b1);
-    $display("Finished.");
+    #4 $display("Finished.");
 
     $display("\nResults:\n");
     $readmemb("R.bin", R); #2;
