@@ -186,8 +186,8 @@ module TestHarness;
     // --------------------------------------------------------------
     // element bitwidth     boolean         0 -> 8 bits, 1 -> 16 bits
     // activation function  logic [1:0]     0 -> SWS, 1 -> ReLU, 2 -> arctan
-    // a                    logic [6:0]     1 - 64
-    // k                    logic [6:0]     1 - 64
+    // a                    logic [6:0]     0 - 24
+    // k                    logic [6:0]     0 - 7
     // M                    logic [6:0]     1 - 64
     // N                    logic [6:0]     1 - 64
 
