@@ -201,7 +201,7 @@ module TestHarness;
     // M                    logic [6:0]     1 - 64
     // N                    logic [6:0]     1 - 64
 
-    run_test(0, 0, 0, 1, 1, 1);
+    run_test(0, 0, 0, 1, 6, 6);
 
 `ifdef DEBUG
   $vcdplusclose;
@@ -259,7 +259,7 @@ module TestHarness;
       $display("address       data                   ");
       $display("-------------------------------------");
       for (i = 0; i < (wblocks + xblocks + rblocks); i = i + 1)
-        #2 $display("%2h            %1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h", i*8, 
+        #2 $display("%-14h%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h", i*8, 
                                     extmem.sram.mem[i][63:60],
                                     extmem.sram.mem[i][59:56],
                                     extmem.sram.mem[i][55:52],
