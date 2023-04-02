@@ -122,9 +122,9 @@ module TestHarness;
   logic [63:0]  asic_word;
 
   integer i;
-  integer wblocks;
-  integer xblocks;
-  integer rblocks;
+
+  logic [63:0] wblocks, xblocks, rblocks;
+
 
   reg exit, fail;
   reg [1023:0] 	vcdplusfile = 0;
@@ -164,6 +164,10 @@ module TestHarness;
 
   assign asic_subword = asic_word>>((i % (k ? k : bitwidth ? 4 : 8))*(bitwidth ? 16 : 8));
   assign asic_result = bitwidth ? asic_subword[15:0] : asic_subword[7:0];
+
+  assign wblocks = k ? (M*N) % k ? (M*N) / k + 1 : (M*N) / k : (M*N) % (bitwidth ? 4 : 8) ? (M*N) / (bitwidth ? 4 : 8) + 1 : (M*N) / (bitwidth ? 4 : 8);
+  assign xblocks = k ? N % k ? N / k + 1 : N / k : N % (bitwidth ? 4 : 8) ? N / (bitwidth ? 4 : 8) + 1 : N / (bitwidth ? 4 : 8);
+  assign rblocks = k ? M % k ? M / k + 1 : M / k : M % (bitwidth ? 4 : 8) ? M / (bitwidth ? 4 : 8) + 1 : M / (bitwidth ? 4 : 8);
 
   initial
   begin
@@ -254,9 +258,6 @@ module TestHarness;
       $display("-------------------------------------");
       $display("address       data                   ");
       $display("-------------------------------------");
-      wblocks = k ? (M*N) % k ? (M*N) / k + 1 : (M*N) / k : (M*N) % (bitwidth ? 4 : 8) ? (M*N) / (bitwidth ? 4 : 8) + 1 : (M*N) / (bitwidth ? 4 : 8); #2;
-      xblocks = k ? N % k ? N / k + 1 : N / k : N % (bitwidth ? 4 : 8) ? N / (bitwidth ? 4 : 8) + 1 : N / (bitwidth ? 4 : 8); #2;
-      rblocks = k ? M % k ? M / k + 1 : M / k : M % (bitwidth ? 4 : 8) ? M / (bitwidth ? 4 : 8) + 1 : M / (bitwidth ? 4 : 8); #2;
       for (i = 0; i < (wblocks + xblocks + rblocks); i = i + 1)
         #2 $display("%2h            %1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h", i*8, 
                                     extmem.sram.mem[i][63:60],
@@ -302,7 +303,7 @@ module TestHarness;
 
     #2 bitwidth = arg1; actfun = arg2;
     #2 a = arg3; k = arg4; M = arg5; N = arg6; 
-    #2 Waddr = 40'h0; Xaddr = Waddr + (arg5 * arg6) << 3; Raddr = Xaddr + (arg6 << 3);
+    #2 Waddr = 40'h0; Xaddr = Waddr + (wblocks) << 3; Raddr = Xaddr + (xblocks << 3);
 
     #2 reset = 1'b1;
     #2 go = 1;
