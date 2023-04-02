@@ -86,4 +86,4 @@ view : $(SIM_DIR)/$(VPD_FILE)
 	cd $(SIM_DIR) && dve -vpd $(VPD_FILE) -script dve-startup.tcl
 
 clean :
-	rm -rf csrc vc_hdrs.h $(SIM_DIR)/$(SIM_EXE) $(SIM_DIR)/$(SIM_EXE).daidir $(SIM_DIR)/ucli.key $(SIM_DIR)/$(VPD_FILE) $(SIM_DIR)/DVEfiles $(SIM_DIR)/*.bin $(SIM_DIR)/*.mat
+	rm -rf csrc vc_hdrs.h $(SIM_DIR)/$(SIM_EXE) $(SIM_DIR)/$(SIM_EXE).daidir $(SIM_DIR)/ucli.key $(SIM_DIR)/$(VPD_FILE) $(SIM_DIR)/DVEfiles
