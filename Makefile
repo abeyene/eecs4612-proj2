@@ -17,8 +17,8 @@ b ?= 0
 f ?= 0
 a ?= 0
 k ?= 1
-M ?= 2
-N ?= 2
+M ?= 1
+N ?= 1
 
 VSRC = vsrc
 TEST_HARNESS = TestHarness.v
