@@ -7,8 +7,8 @@ for functionally verifying your custom ASIC.
 
 ### Setup (only have to do once)
 
-To get started, run the following two commands to setup your path
-and configure the testbench: 
+To get started, run the following three commands to setup your path
+and files, and configure the testbench: 
 
 source env.sh
 make update
