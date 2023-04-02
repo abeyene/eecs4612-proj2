@@ -147,7 +147,7 @@ module TestHarness;
       case (actfun)
         2'b00 : exp_result = exp_subword[15:0];
         2'b01 : exp_result = exp_subword[15:0] > 0 ? exp_subword[15:0] : 0;
-        2'b10 : exp_result = $atan(exp_subword[15:0] > 0 ? exp_subword[15:0] : 0);
+        2'b10 : exp_result = $tanh(exp_subword[15:0] > 0 ? exp_subword[15:0] : 0);
         default : exp_result = 16'hxxxx;
       endcase
     end

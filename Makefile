@@ -70,7 +70,7 @@ $(SIM_DIR)/$(SIM_EXE) : clean $(VSRC_PATH) $(SIM_DIR)
 	vcs $(VCS_NONCC_OPTS) $(PREPROC_DEFINES) +define+DEBUG -debug_access+all $(VSRC)/$(TEST_HARNESS) -o $@
 
 setup : $(SIM_DIR)
-	python ExtMem.py -M $(M) -N $(N) -k $(k) -b $(b) && mv *.bin $(SIM_DIR) && mv *.mat $(SIM_DIR)
+	python ExtMem.py -b $(b) -f $(f) -a $(a) -k $(k) -M $(M) -N $(N) && mv *.bin $(SIM_DIR) && mv *.mat $(SIM_DIR)
 	@sed -i "s/run_test(\([0-1]\), \([0-2]\), \([0-9]\{1,2\}\), \([0-7]\), [0-9]\{1,2\}, [0-9]\{1,2\})/run_test($(b), $(f), $(a), $(k), $(M), $(N))/" $(VSRC)/$(TEST_HARNESS)
 
 update : 
@@ -86,4 +86,4 @@ view : $(SIM_DIR)/$(VPD_FILE)
 	cd $(SIM_DIR) && dve -vpd $(VPD_FILE) -script dve-startup.tcl
 
 clean :
-	rm -rf csrc vc_hdrs.h $(SIM_DIR)/$(SIM_EXE) $(SIM_DIR)/$(SIM_EXE).daidir $(SIM_DIR)/ucli.key $(SIM_DIR)/$(VPD_FILE) $(SIM_DIR)/DVEfiles
+	rm -rf csrc vc_hdrs.h $(SIM_DIR)/$(SIM_EXE) $(SIM_DIR)/$(SIM_EXE).daidir $(SIM_DIR)/ucli.key $(SIM_DIR)/$(VPD_FILE) $(SIM_DIR)/DVEfiles $(SIM_DIR)/*.bin $(SIM_DIR)/*.mat

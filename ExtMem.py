@@ -29,33 +29,42 @@ XLEN = 64
 def main():
 
     parser = argparse.ArgumentParser(description="Generate memory contents (W, X, R) of ExtMem", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("-b", "--bitwidth", type=int, default=0, help="Element Bitwidth")
+    parser.add_argument("-f", "--actfun", type=int, default=0, help="Activation Function")
+    parser.add_argument("-a", type=int, default=1, help="Subword selection")
+    parser.add_argument("-k", type=int, default=1, help="Arrangement of W and X in memory")
     parser.add_argument("-M", type=int, default=2, help="Dimension M")
     parser.add_argument("-N", type=int, default=2, help="Dimension N")
-    parser.add_argument("-b", "--bitwidth", type=int, default=0, help="Element Bitwidth")
-    parser.add_argument("-k", type=int, default=1, help="Arrangement of W and X in memory")
-    parser.add_argument("-f", "--force", action="store_true", default=False, help="Override existing memory")
     args = parser.parse_args()
 
-    if args.M < 1 or args.M > 64 or args.N < 1 or args.N > 64:
-        logging.error("Invalid value for M or N (must be integers between 1 and 64)")
-        sys.exit(1)
-
     if args.bitwidth != 0 and args.bitwidth != 1:
-        logging.error("Invalid value for b (must be 0 or 1)")
+        logging.error("Invalid value for b. Must be 0 (8 bit elements) or 1 (16 bit elements).")
         sys.exit(1)
 
-    if args.k < 0 or args.k > 7:
-        logging.error("Invalid value for k (must be integer between 0 and 7)")
-        sys.exit(1)
-    
-    if args.bitwidth == 1 and args.k > 3:
-        logging.error("Invalid value for k with 16 bit elements (must be integer between 0 and 3)")
+    if args.actfun != 0 and args.actfun != 1 and args.actfun !=2:
+        logging.error("Invalid value for f. Must be 0 (SWS), 1 (ReLu) or 2 (tanh)")
         sys.exit(1)
 
-    if not args.force:
-        if(os.path.isfile("ExtMem.bin")):
-            logging.error("ExtMem.bin already exists. Re-run with -f/--force to override it.")
+    if args.bitwidth:
+        if args.a < 0 or args.a > 32:
+            logging.error("Invalid value for a. Must be an integer between 0 and 32.")
             sys.exit(1)
+
+        if args.k < 0 or args.k > 3:
+            logging.error("Invalid value for k. Must be an integer between 0 and 3.")
+            sys.exit(1)
+    else:
+        if args.a < 0 or args.a > 24:
+            logging.error("Invalid value for a. Must be an integer between 0 and 24.")
+            sys.exit(1)
+
+        if args.k < 0 or args.k > 7:
+            logging.error("Invalid value for k. Must be an integer between 0 and 7.")
+            sys.exit(1)
+
+    if args.M < 1 or args.M > 64 or args.N < 1 or args.N > 64:
+        logging.error("Invalid value for M or N. Must be integers between 1 and 64.")
+        sys.exit(1)
 
     b = 16 if args.bitwidth else 8
 
