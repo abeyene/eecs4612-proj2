@@ -68,8 +68,8 @@ def main():
 
     b = 16 if args.bitwidth else 8
 
-    W = numpy.random.randint(0, 2**b - 1, (args.M, args.N))
-    X = numpy.random.randint(0, 2**b - 1, (args.N, 1))
+    W = numpy.random.randint(1 - 2**(b-1), 2**(b-1) - 1, (args.M, args.N))
+    X = numpy.random.randint(1 - 2**(b-1), 2**(b-1) - 1, (args.N, 1))
     R = numpy.matmul(W, X)
 
     k = args.k if args.k else XLEN//b

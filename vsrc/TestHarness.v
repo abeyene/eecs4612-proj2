@@ -125,7 +125,6 @@ module TestHarness;
 
   logic [63:0] wblocks, xblocks, rblocks;
 
-
   reg exit, fail;
   reg [1023:0] 	vcdplusfile = 0;
   reg [1023:0] 	vcdfile = 0;
@@ -146,8 +145,8 @@ module TestHarness;
     begin
       case (actfun)
         2'b00 : exp_result = exp_subword[15:0];
-        2'b01 : exp_result = exp_subword[15:0] > 0 ? exp_subword[15:0] : 0;
-        2'b10 : exp_result = $tanh(exp_subword[15:0] > 0 ? exp_subword[15:0] : 0);
+        2'b01 : exp_result = exp_subword[15] == 1 ? 0 : exp_subword[15:0];
+        2'b10 : exp_result = $tanh(exp_subword[15] == 1 ? 0 : exp_subword[15:0]);
         default : exp_result = 16'hxxxx;
       endcase
     end
@@ -155,8 +154,8 @@ module TestHarness;
     begin
       case (actfun)
         2'b00 : exp_result = exp_subword[7:0];
-        2'b01 : exp_result = exp_subword[7:0] > 0 ? exp_subword[7:0] : 0;
-        2'b10 : exp_result = $tanh(exp_subword[7:0] > 0 ? exp_subword[7:0] : 0);
+        2'b01 : exp_result = exp_subword[7] == 1 ? 0 : exp_subword[7:0];
+        2'b10 : exp_result = $tanh(exp_subword[7] == 1 ? 0 : exp_subword[7:0]);
         default : exp_result = 8'hxxxx;
       endcase
     end
@@ -201,7 +200,7 @@ module TestHarness;
     // M                    logic [6:0]     1 - 64
     // N                    logic [6:0]     1 - 64
 
-    run_test(0, 0, 0, 3, 4, 4);
+    run_test(0, 0, 0, 5, 5, 5);
 
 `ifdef DEBUG
   $vcdplusclose;
