@@ -12,10 +12,6 @@
 # test harness. The randomly generated arrays
 # are also stored in separate files (.mat) in
 # row major order for viewing.
-#
-# Usage:
-#
-# python ExtMem.py [-M m] [-N n]
 
 import random
 import numpy 
@@ -24,7 +20,14 @@ import os
 import sys
 import logging
 
+Grad = False
 XLEN = 64
+
+def twos_comp(val, bits):
+    """compute the 2's complement of int value val"""
+    if (val & (1 << (bits - 1))) != 0: # if sign bit is set e.g., 8bit: 128-255
+        val = val - (1 << bits)        # compute negative value
+    return val
 
 def main():
 
@@ -67,10 +70,11 @@ def main():
         sys.exit(1)
 
     b = 16 if args.bitwidth else 8
+    twos_comp_v = numpy.vectorize(twos_comp)
 
-    W = numpy.random.randint(1 - 2**(b-1), 2**(b-1) - 1, (args.M, args.N))
-    X = numpy.random.randint(1 - 2**(b-1), 2**(b-1) - 1, (args.N, 1))
-    R = numpy.matmul(W, X)
+    W = numpy.random.randint(0, 2**b, (args.M, args.N))
+    X = numpy.random.randint(0, 2**b, (args.N, 1))
+    R = numpy.matmul(twos_comp_v(W, b), twos_comp_v(X, b))
 
     k = args.k if args.k else XLEN//b
 
@@ -103,15 +107,15 @@ def main():
 
     with open("R.bin", 'w') as f:
         for r in numpy.nditer(R):
-            f.write(str(int(bin(r)[2:])).zfill(XLEN)+"\n")
+            f.write(str(int(bin(r if r > 0 else 2**(48 if Grad else 32) - abs(r))[2:])).zfill(XLEN)+"\n")
 
     with open("W.mat", 'w') as f:
         for w in numpy.nditer(W):
-            f.write(str(w)+"\n")
+            f.write(str(twos_comp(w, b))+"\n")
  
     with open("X.mat", 'w') as f:
         for x in numpy.nditer(X):
-            f.write(str(x)+"\n")
+            f.write(str(twos_comp(x, b))+"\n")
 
     with open("R.mat", 'w') as f:
         for r in numpy.nditer(R):

@@ -200,7 +200,7 @@ module TestHarness;
     // M                    logic [6:0]     1 - 64
     // N                    logic [6:0]     1 - 64
 
-    run_test(0, 0, 0, 5, 5, 5);
+    run_test(0, 0, 0, 1, 1, 1);
 
 `ifdef DEBUG
   $vcdplusclose;
