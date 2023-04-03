@@ -86,8 +86,6 @@ def main():
             line = ''
             for w in numpy.ndarray.flatten(W)[((args.M*args.N) // k) * k : ((args.M*args.N) // k) * k + args.M*args.N % k]:
                 line = str(int(bin(w)[2:])).zfill(b) + line
-                print(w)
-                print(line)
             mem.write(line.zfill(XLEN) + "\n")
 
         for index in range(int(args.N/k)):
