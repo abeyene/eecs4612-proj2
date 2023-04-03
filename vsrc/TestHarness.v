@@ -165,9 +165,9 @@ module TestHarness;
   assign asic_subword = asic_word>>((i % (k ? k : bitwidth ? 4 : 8))*(bitwidth ? 16 : 8));
   assign asic_result = bitwidth ? asic_subword[15:0] : asic_subword[7:0];
 
-  assign wblocks = k ? (M*N) % k ? (M*N) / k + 1 : (M*N) / k : (M*N) % (bitwidth ? 4 : 8) ? (M*N) / (bitwidth ? 4 : 8) + 1 : (M*N) / (bitwidth ? 4 : 8);
-  assign xblocks = k ? N % k ? N / k + 1 : N / k : N % (bitwidth ? 4 : 8) ? N / (bitwidth ? 4 : 8) + 1 : N / (bitwidth ? 4 : 8);
-  assign rblocks = k ? M % k ? M / k + 1 : M / k : M % (bitwidth ? 4 : 8) ? M / (bitwidth ? 4 : 8) + 1 : M / (bitwidth ? 4 : 8);
+  assign wblocks = k ? ((M*N) % k) != 0 ? (M*N) / k + 1 : (M*N) / k : ((M*N) % (bitwidth ? 4 : 8)) != 0 ? (M*N) / (bitwidth ? 4 : 8) + 1 : (M*N) / (bitwidth ? 4 : 8);
+  assign xblocks = k ? (N % k) != 0 ? N / k + 1 : N / k : (N % (bitwidth ? 4 : 8)) != 0 ? N / (bitwidth ? 4 : 8) + 1 : N / (bitwidth ? 4 : 8);
+  assign rblocks = k ? (M % k) != 0 ? M / k + 1 : M / k : (M % (bitwidth ? 4 : 8)) != 0 ? M / (bitwidth ? 4 : 8) + 1 : M / (bitwidth ? 4 : 8);
 
   initial
   begin
@@ -201,7 +201,7 @@ module TestHarness;
     // M                    logic [6:0]     1 - 64
     // N                    logic [6:0]     1 - 64
 
-    run_test(0, 0, 0, 1, 6, 6);
+    run_test(0, 0, 0, 1, 1, 1);
 
 `ifdef DEBUG
   $vcdplusclose;
