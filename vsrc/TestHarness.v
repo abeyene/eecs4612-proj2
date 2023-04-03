@@ -156,7 +156,7 @@ module TestHarness;
       case (actfun)
         2'b00 : exp_result = exp_subword[7:0];
         2'b01 : exp_result = exp_subword[7:0] > 0 ? exp_subword[7:0] : 0;
-        2'b10 : exp_result = $atan(exp_subword[7:0] > 0 ? exp_subword[7:0] : 0);
+        2'b10 : exp_result = $tanh(exp_subword[7:0] > 0 ? exp_subword[7:0] : 0);
         default : exp_result = 8'hxxxx;
       endcase
     end
@@ -201,7 +201,7 @@ module TestHarness;
     // M                    logic [6:0]     1 - 64
     // N                    logic [6:0]     1 - 64
 
-    run_test(0, 0, 0, 1, 1, 1);
+    run_test(0, 0, 0, 3, 4, 4);
 
 `ifdef DEBUG
   $vcdplusclose;
