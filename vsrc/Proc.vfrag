@@ -37,7 +37,7 @@
             cmd_valid = 1;
             cmd_inst_opcode = 7'b000_0000;
             cmd_inst_funct  = 7'b000_0010;
-            cmd_rs1	    = {32'b0, {10'b0 , N}, {10'b0 , M}};
+            cmd_rs1	    = {32'b0, {9'b0 , N}, {9'b0 , M}};
             state_n         = WAIT;
           end
         end	

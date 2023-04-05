@@ -106,7 +106,8 @@ module TestHarness;
     .mem_resp_data_o(mem_resp_data)
   );
 
-  logic [5:0]   a, k,  M,  N;
+  logic [5:0]   a, k;
+  logic [6:0]   M,  N;
   logic         bitwidth; 
   logic [1:0]   actfun;
   logic [39:0]	Waddr, Xaddr, Raddr;
@@ -292,8 +293,8 @@ module TestHarness;
     input logic [1:0] 	arg2,
     input logic [6:0] 	arg3,
     input logic [6:0] 	arg4,
-    input logic [6:0] 	arg5,
-    input logic [6:0] 	arg6
+    input logic [7:0] 	arg5,
+    input logic [7:0] 	arg6
   );
   begin
     $readmemb("ExtMem.bin", extmem.sram.mem);
