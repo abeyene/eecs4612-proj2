@@ -14,7 +14,7 @@ source env.sh
 make update
 make setup b=0 f=0 a=0 k=1 M=1 N=1
 
-The second command will create a random matrix/vector set W and X to place
+The third command will create a random matrix/vector set W and X to place
 in memory. It will also configure the PROC to send the ASIC commands based 
 on your chosen bitwidth (b), activation function (f), subword (a), 
 data arrangement (k), and matrix/vector dimensions (M and N).
