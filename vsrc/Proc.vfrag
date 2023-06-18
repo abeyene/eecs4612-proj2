@@ -24,9 +24,9 @@
           if (cmd_ready)
           begin
             cmd_valid = 1'b1;
-            cmd_inst_opcode = (actfun << 1) | bitwidth;
-            cmd_inst_funct  = 7'b000_0001;
-            cmd_rs1	    = {32'b0, {10'b0 , k}, {10'b0 , a}};
+            cmd_bits_inst_opcode = (actfun << 1) | bitwidth;
+            cmd_bits_inst_funct  = 7'b000_0001;
+            cmd_bits_rs1	    = {32'b0, {10'b0 , k}, {10'b0 , a}};
             state_n 	    = WAIT;
           end
         end	
@@ -35,9 +35,9 @@
           if (cmd_ready)
           begin
             cmd_valid = 1;
-            cmd_inst_opcode = 7'b000_0000;
-            cmd_inst_funct  = 7'b000_0010;
-            cmd_rs1	    = {32'b0, {9'b0 , N}, {9'b0 , M}};
+            cmd_bits_inst_opcode = 7'b000_0000;
+            cmd_bits_inst_funct  = 7'b000_0010;
+            cmd_bits_rs1	    = {32'b0, {9'b0 , N}, {9'b0 , M}};
             state_n         = WAIT;
           end
         end	
@@ -46,9 +46,9 @@
           if (cmd_ready)
           begin
             cmd_valid = 1;
-            cmd_inst_opcode = 7'b000_0000;
-            cmd_inst_funct  = 7'b000_0100;
-            cmd_rs1	    = Waddr;
+            cmd_bits_inst_opcode = 7'b000_0000;
+            cmd_bits_inst_funct  = 7'b000_0100;
+            cmd_bits_rs1	    = Waddr;
             state_n 	    = WAIT;
           end
         end	
@@ -57,9 +57,9 @@
           if (cmd_ready)
           begin
             cmd_valid = 1;
-            cmd_inst_opcode = 7'b000_0000;
-            cmd_inst_funct  = 7'b000_0110;
-            cmd_rs1	    = Xaddr;
+            cmd_bits_inst_opcode = 7'b000_0000;
+            cmd_bits_inst_funct  = 7'b000_0110;
+            cmd_bits_rs1	    = Xaddr;
             state_n 	    = WAIT;
           end
         end	
@@ -68,9 +68,9 @@
           if (cmd_ready)
           begin
             cmd_valid = 1;
-            cmd_inst_opcode = 7'b000_0000;
-            cmd_inst_funct  = 7'b000_1000;
-            cmd_rs1	    = Raddr;
+            cmd_bits_inst_opcode = 7'b000_0000;
+            cmd_bits_inst_funct  = 7'b000_1000;
+            cmd_bits_rs1	    = Raddr;
             state_n 	    = WAIT;
            end
         end	
@@ -84,14 +84,14 @@
         end	
       default :
         begin
-          cmd_inst_opcode = 7'b000_0000;
-          cmd_inst_rd 	  = 5'b0_0000;
-          cmd_inst_xs2 	  = 1'b0;
-          cmd_inst_xs1 	  = 1'b0;
-          cmd_inst_xd 	  = 1'b0;
-          cmd_inst_rs1 	  = 5'b0_0000;
-          cmd_inst_rs2 	  = 5'b0_0000;
-          cmd_inst_funct  = 7'b000_0000;
+          cmd_bits_inst_opcode = 7'b000_0000;
+          cmd_bits_inst_rd 	  = 5'b0_0000;
+          cmd_bits_inst_xs2 	  = 1'b0;
+          cmd_bits_inst_xs1 	  = 1'b0;
+          cmd_bits_inst_xd 	  = 1'b0;
+          cmd_bits_inst_rs1 	  = 5'b0_0000;
+          cmd_bits_inst_rs2 	  = 5'b0_0000;
+          cmd_bits_inst_funct  = 7'b000_0000;
           state_n 	  = IDLE;
           cmd_valid 	  = 1'b0;
           resp_ready 	  = 1'b0;
