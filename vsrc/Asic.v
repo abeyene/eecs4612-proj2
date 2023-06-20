@@ -215,5 +215,6 @@ module Asic
     input [FPConstants_FLAGS_SZ-1:0] rocc_fpu_resp_bits_exc );
 
   // ************ PUT YOUR RTL HERE ************ //
-  	
+
+    assign rocc_cmd_ready = 1'b1;
 endmodule

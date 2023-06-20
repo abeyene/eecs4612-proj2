@@ -13,19 +13,14 @@ URL=https://github.com/abeyene/eecs4612-proj2.git
 CLOCK_PERIOD ?= 1.0
 RESET_DELAY ?= 777.7
 
-b ?= 0
-f ?= 0
-a ?= 0
-k ?= 1
-M ?= 1
-N ?= 1
-
 VSRC = vsrc
 TEST_HARNESS = TestHarness.v
 SIM_DIR = simulation
 SIM_EXE = simv-asic
-SIM_OPTS = +max-cycles=1000000
+SIM_OPTS = +max-cycles=1000
 VPD_FILE = Proj2.vpd
+
+vcs_sram_config = $(SIM_DIR)/vcs_sram_config
 
 VCS_NONCC_OPTS = \
   -notice \
@@ -44,7 +39,7 @@ VCS_NONCC_OPTS = \
   -debug_acc+pp+dmptf -debug_region+cell+encrypt \
   -y $(VSRC) \
   +incdir+$(VSRC) \
-
+	+vcs+initreg+config+$(vcs_sram_config)
 PREPROC_DEFINES = \
   +define+VCS \
   +define+CLOCK_PERIOD=$(CLOCK_PERIOD) \
@@ -60,7 +55,7 @@ all : help
 
 help :
 	@echo -e "\n----------------------------- Makefile Options ---------------------------------"
-	@echo -e "\na) make setup M=X N=X - Generate a random MxN and Nx1 matrix to store in ExtMem"
+	@echo -e "\na) make setup - Generate random scores to store in ExtMem"
 	@echo -e "b) make simulator - Build the vcs simulation executable"
 	@echo -e "c) make run - Run the simulation"
 	@echo -e "d) make view - open the waveform file with DVE"
@@ -69,9 +64,11 @@ help :
 $(SIM_DIR)/$(SIM_EXE) : clean $(VSRC_PATH) $(SIM_DIR)
 	vcs $(VCS_NONCC_OPTS) $(PREPROC_DEFINES) +define+DEBUG -debug_access+all $(VSRC)/$(TEST_HARNESS) -o $@
 
+$(vcs_sram_config): | $(SIM_DIR)
+	@echo "module SynchronousSRAM_1rw random" > $@
+
 setup : $(SIM_DIR)
-	python ExtMem.py -b $(b) -f $(f) -a $(a) -k $(k) -M $(M) -N $(N) && mv *.bin $(SIM_DIR) && mv *.mat $(SIM_DIR)
-	@sed -i "s/run_test(\([0-1]\), \([0-2]\), \([0-9]\{1,2\}\), \([0-7]\), [0-9]\{1,2\}, [0-9]\{1,2\})/run_test($(b), $(f), $(a), $(k), $(M), $(N))/" $(VSRC)/$(TEST_HARNESS)
+	python ExtMem.py && mv *.bin $(SIM_DIR)
 
 update : 
 	git checkout vsrc/TestHarness.v

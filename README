@@ -3,7 +3,7 @@
 ### Overview
 
 This repository contains RTL, scripts, a testharness and test vectors
-for functionally verifying your custom ASIC. 
+for functionally verifying Ali's Decoder.
 
 ### Setup (only have to do once)
 
@@ -12,12 +12,10 @@ and files, and configure the testbench:
 
 source env.sh
 make update
-make setup b=0 f=0 a=0 k=1 M=1 N=1
+make setup
 
-The third command will create a random matrix/vector set W and X to place
-in memory. It will also configure the PROC to send the ASIC commands based 
-on your chosen bitwidth (b), activation function (f), subword (a), 
-data arrangement (k), and matrix/vector dimensions (M and N).
+The third command will create a 1025x12818 16-bit scores and place them
+in memory. 
 
 Place all your verilog inside the vsrc directory. Use the Asic module defined 
 in Asic.v as your top level module.
@@ -33,32 +31,19 @@ make view
 
 ### File Descriptions
 
-Makefile        - Contains "recipes" for each step of the ASIC design flow
+Makefile    - Contains "recipes" for each step of the ASIC design flow
 
-env.sh		- Sets up the user's PATH to reference VCS and Verdi 2022
+env.sh		  - Sets up the user's PATH to reference VCS and Verdi 2022
 
-vsrc		- Contains the verilog source files and test bench
+vsrc		    - Contains the verilog source files and test bench
 
 simulation	- Contains all simulation related files
 
-ExtMem.py	- Python script to randomly generate MxN matrix W and Nx1 matrix X.
-		  It will produce several files including ExtMem.bin, R.bin, W.mat, 
-		  X.mat and R.mat. 
+ExtMem.py	  - Python script to randomly generate the logpost values.
+		          It will produce ExtMem.bin.
 
 ExtMem.bin	- Contains the data that the testbench will use to initialize external memory.
-		  It holds the values of W and X which are contiguously arranged in row-major 
-		  order starting at address 0. Each entry/block of the memory is a 64-bit word which 
-		  holds a single 8/16 bit element of W or X. The testbench will read in the contents 
-		  of ExtMem.bin into the external memory at the start of simulation.
-
-R.bin		- Contains the product of W and X in binary format. It will be read in by the
-		  test bench and used to verify the ASIC results.
-
-W.mat		- Contains the values of the randomly generated MxN matrix W in human-readable,
-		  row-major format. It's provided to allow the user to inspect W manually.
-
-X.mat		- Contains the values of the randomly generated Nx1 matrix X in human-readable,
-		  row-major format. It's provided to allow the user to inspect X manually.
-
-R.mat		- Contains the values of the product of W and X in human-readable,
-		  row-major format. It's provided to allow the user to inspect R manually.
+		          It holds the values of random scores which are contiguously arranged starting at
+		          address 0. Each entry/block of the memory is a 64-bit word which holds a single 
+              16 bit score. The testbench will read in the contents of ExtMem.bin into the external 
+              memory at the start of simulation.

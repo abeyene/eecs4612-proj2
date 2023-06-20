@@ -31,23 +31,34 @@ module  ExtMem
 (
   input   logic        clk,
   input   logic        reset,
-    
+
   // MEM REQ Interface
 
   output  logic        mem_req_ready,
   input   logic        mem_req_valid,
   input   logic [39:0] mem_req_bits_addr,
+  input   logic [7:0]  mem_req_bits_tag,
+  input   logic        mem_req_bits_phys,
   input   logic [4:0]  mem_req_bits_cmd,
   input   logic [1:0]  mem_req_bits_size,
   input   logic [63:0] mem_req_bits_data,
+  input   logic        mem_req_bits_signed,
+  input   logic [7:0]  mem_req_bits_mask,
 
   // MEM RESP Interface
 
   output  logic        mem_resp_valid,
   output  logic [39:0] mem_resp_bits_addr,
+  output  logic [7:0]  mem_resp_bits_tag,
   output  logic [4:0]  mem_resp_bits_cmd,
   output  logic [1:0]  mem_resp_bits_size,
-  output  logic [63:0] mem_resp_bits_data
+  output  logic [63:0] mem_resp_bits_data,
+  output  logic        mem_resp_bits_signed,
+  output  logic [7:0]  mem_resp_bits_mask,
+  output  logic        mem_resp_bits_replay,
+  output  logic        mem_resp_bits_has_data,
+  output  logic [63:0] mem_resp_bits_data_raw,
+  output  logic [63:0] mem_resp_bits_store_data
 );
 
   localparam read_cmd_lp  = 3'b0;
@@ -84,23 +95,30 @@ module  ExtMem
             read_en       = 1'b0;
             read_addr     = `EXTMEM_ADDR_SIZE'b0;
             write_en      = 1'b0;
-            write_byte_en = 1'b0;
+            write_byte_en = 8'b0;
             write_addr    = `EXTMEM_ADDR_SIZE'b0;
             write_data    = 64'b0;
           end
          else
          begin
-           mem_req_ready     = 1'b1;
-           mem_resp_valid    = 1'b0;
-           mem_resp_bits_addr     = 40'b0;
-           mem_resp_bits_cmd      = 5'b0;
-           mem_resp_bits_size     = 2'b0;
-           mem_resp_bits_data     = 64'b0;
+           mem_req_ready              = 1'b1;
+           mem_resp_valid             = 1'b0;
+           mem_resp_bits_addr         = 40'b0;
+           mem_resp_bits_tag          = 8'b0;
+           mem_resp_bits_cmd          = 5'b0;
+           mem_resp_bits_size         = 2'b0;
+           mem_resp_bits_data         = 64'b0;
+           mem_resp_bits_signed       = 1'b0;
+           mem_resp_bits_mask         = 8'b0;
+           mem_resp_bits_replay       = 64'b0;
+           mem_resp_bits_has_data     = 64'b0;
+           mem_resp_bits_data_raw     = 64'b0;
+           mem_resp_bits_store_data   = 64'b0;
 
            read_en             = 1'b0;
            read_addr           = `EXTMEM_ADDR_SIZE'b0;
            write_en            = 1'b0;
-           write_byte_en       = 1'b0;
+           write_byte_en       = 8'b0;
            write_addr          = `EXTMEM_ADDR_SIZE'b0;
            write_data          = 64'b0;
            state_n             = IDLE;
@@ -108,17 +126,24 @@ module  ExtMem
       end
       MEM_READ_REQ :
       begin
-        mem_req_ready       = 1'b0;
+        mem_req_ready         = 1'b0;
         read_en               = 1'b1;
         read_addr             = mem_req_bits_addr[`EXTMEM_ADDR_SIZE-1:0] >> 3;
         state_n               = MEM_READ_RESP;
       end
       MEM_READ_RESP :
       begin
-        mem_resp_valid      = 1'b1;
-        mem_resp_bits_addr       = mem_req_bits_addr[`EXTMEM_ADDR_SIZE-1:0];
-        mem_resp_bits_cmd        = mem_req_bits_cmd;
-        mem_resp_bits_size       = mem_req_bits_size;
+        mem_resp_valid            = 1'b1;
+        mem_resp_bits_addr        = mem_req_bits_addr[`EXTMEM_ADDR_SIZE-1:0];
+        mem_resp_bits_tag         = mem_req_bits_tag;
+        mem_resp_bits_cmd         = mem_req_bits_cmd;
+        mem_resp_bits_size        = mem_req_bits_size;
+        mem_resp_bits_signed      = mem_req_bits_signed;
+        mem_resp_bits_mask        = mem_req_bits_mask;
+        mem_resp_bits_replay      = 1'b0;
+        mem_resp_bits_has_data    = 1'b1;
+        mem_resp_bits_data_raw    = 64'b0;
+        mem_resp_bits_store_data  = 64'b0;
         case (mem_req_bits_size)
           0 : mem_resp_bits_data = read_data;
           1 : mem_resp_bits_data = read_data & 64'hff;
@@ -133,7 +158,7 @@ module  ExtMem
       end
       MEM_WRITE_REQ :
       begin
-        mem_req_ready       = 1'b0;
+        mem_req_ready         = 1'b0;
         write_en              = 1'b1;
         write_addr            = mem_req_bits_addr[`EXTMEM_ADDR_SIZE-1:0] >> 3;
         write_data            = mem_req_bits_data;
@@ -151,28 +176,35 @@ module  ExtMem
       end
       MEM_WRITE_RESP :
       begin
-        mem_resp_valid   = 1'b1;
-        mem_resp_bits_addr    = mem_req_bits_addr[`EXTMEM_ADDR_SIZE-1:0];
-        mem_resp_bits_cmd     = mem_req_bits_cmd;
-        mem_resp_bits_size    = mem_req_bits_size;
-        mem_resp_bits_data    = mem_req_bits_data;   
-        state_n            = IDLE;
+        mem_resp_valid            = 1'b1;
+        mem_resp_bits_addr        = mem_req_bits_addr[`EXTMEM_ADDR_SIZE-1:0];
+        mem_resp_bits_tag         = mem_req_bits_tag;
+        mem_resp_bits_cmd         = mem_req_bits_cmd;
+        mem_resp_bits_size        = mem_req_bits_size;
+        mem_resp_bits_data        = mem_req_bits_data;
+        mem_resp_bits_signed      = mem_req_bits_signed;
+        mem_resp_bits_mask        = mem_req_bits_mask;
+        mem_resp_bits_replay      = 1'b0;
+        mem_resp_bits_has_data    = 1'b0;
+        mem_resp_bits_data_raw    = 64'b0;
+        mem_resp_bits_store_data  = 64'b0;
+        state_n                   = IDLE;
      end
      default :
      begin
-       mem_req_ready     = 1'b1;
-       mem_resp_valid    = 1'b0;
+       mem_req_ready          = 1'b1;
+       mem_resp_valid         = 1'b0;
        mem_resp_bits_addr     = 40'b0;
        mem_resp_bits_cmd      = 5'b0;
        mem_resp_bits_size     = 2'b0;
        mem_resp_bits_data     = 64'b0;
 
-       read_en             = 1'b0;
-       read_addr           = `EXTMEM_ADDR_SIZE'b0;
-       write_en            = 1'b0;
-       write_byte_en       = 1'b0;
-       write_addr          = `EXTMEM_ADDR_SIZE'b0;
-       write_data          = 64'b0;
+       read_en                = 1'b0;
+       read_addr              = `EXTMEM_ADDR_SIZE'b0;
+       write_en               = 1'b0;
+       write_byte_en          = 8'b0;
+       write_addr             = `EXTMEM_ADDR_SIZE'b0;
+       write_data             = 64'b0;
      end
     endcase
   end

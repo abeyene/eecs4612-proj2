@@ -1,23 +1,36 @@
 # Begin_DVE_Session_Save_Info
 # DVE full session
-# Saved on Wed Mar 8 20:05:58 2023
+# Saved on Tue Jun 20 03:47:41 2023
+# Designs open: 1
+#   V1: Proj2.vpd
 # Toplevel windows open: 2
 # 	TopLevel.1
 # 	TopLevel.2
 #   Source.1: TestHarness
-#   Wave.1: 3 signals
-#   Group count = 1
-#   Group Group1 signal count = 3
+#   Wave.1: 41 signals
+#   Group count = 5
+#   Group clock, reset and trace counter signal count = 3
+#   Group cmd interface signal count = 12
+#   Group resp interface signal count = 4
+#   Group mem req interface signal count = 10
+#   Group mem resp interface signal count = 12
 # End_DVE_Session_Save_Info
 
 # DVE version: T-2022.06-SP2_Full64
 # DVE build date: Nov 29 2022 21:09:56
 
 
-#<Session mode="Full" path="/local/data0/Students/AB/4612/siren/proj2_23/ab/session.Proj2.vpd.tcl" type="Debug">
+#<Session mode="Full" path="/local/data0/Students/AB/eecs4612-proj2/simulation/gf22.tcl" type="Debug">
 
 gui_set_loading_session_type Post
 gui_continuetime_set
+
+# Close design
+if { [gui_sim_state -check active] } {
+    gui_sim_terminate
+}
+gui_close_db -all
+gui_expr_clear_all
 
 # Close all windows
 gui_close_window -type Console
@@ -59,7 +72,7 @@ if {![gui_exist_window -window TopLevel.1]} {
 } else { 
     set TopLevel.1 TopLevel.1
 }
-gui_show_window -window ${TopLevel.1} -show_state normal -rect {{67 118} {1915 873}}
+gui_show_window -window ${TopLevel.1} -show_state normal -rect {{74 192} {1918 945}}
 
 # ToolBar settings
 gui_set_toolbar_attributes -toolbar {TimeOperations} -dock_state top
@@ -100,24 +113,23 @@ gui_hide_toolbar -toolbar {Testbench}
 # End ToolBar settings
 
 # Docked window settings
-set HSPane.1 [gui_create_window -type HSPane -parent ${TopLevel.1} -dock_state left -dock_on_new_line true -dock_extent 567]
+set HSPane.1 [gui_create_window -type HSPane -parent ${TopLevel.1} -dock_state left -dock_on_new_line true -dock_extent 565]
 catch { set Hier.1 [gui_share_window -id ${HSPane.1} -type Hier] }
-gui_hier_list_init -id ${Hier.1}
-gui_set_window_pref_key -window ${HSPane.1} -key dock_width -value_type integer -value 567
+gui_set_window_pref_key -window ${HSPane.1} -key dock_width -value_type integer -value 565
 gui_set_window_pref_key -window ${HSPane.1} -key dock_height -value_type integer -value -1
 gui_set_window_pref_key -window ${HSPane.1} -key dock_offset -value_type integer -value 0
-gui_update_layout -id ${HSPane.1} {{left 0} {top 0} {width 566} {height 504} {dock_state left} {dock_on_new_line true} {child_hier_colhier 493} {child_hier_coltype 78} {child_hier_colpd 0} {child_hier_col1 0} {child_hier_col2 1} {child_hier_col3 -1}}
-set DLPane.1 [gui_create_window -type DLPane -parent ${TopLevel.1} -dock_state left -dock_on_new_line true -dock_extent 590]
+gui_update_layout -id ${HSPane.1} {{left 0} {top 0} {width 564} {height 504} {dock_state left} {dock_on_new_line true} {child_hier_colhier 493} {child_hier_coltype 78} {child_hier_colpd 0} {child_hier_col1 0} {child_hier_col2 1} {child_hier_col3 -1}}
+set DLPane.1 [gui_create_window -type DLPane -parent ${TopLevel.1} -dock_state left -dock_on_new_line true -dock_extent 588]
 catch { set Data.1 [gui_share_window -id ${DLPane.1} -type Data] }
-gui_set_window_pref_key -window ${DLPane.1} -key dock_width -value_type integer -value 590
+gui_set_window_pref_key -window ${DLPane.1} -key dock_width -value_type integer -value 588
 gui_set_window_pref_key -window ${DLPane.1} -key dock_height -value_type integer -value 504
 gui_set_window_pref_key -window ${DLPane.1} -key dock_offset -value_type integer -value 0
-gui_update_layout -id ${DLPane.1} {{left 0} {top 0} {width 589} {height 504} {dock_state left} {dock_on_new_line true} {child_data_colvariable 218} {child_data_colvalue 200} {child_data_coltype 185} {child_data_col1 0} {child_data_col2 1} {child_data_col3 2}}
-set Console.1 [gui_create_window -type Console -parent ${TopLevel.1} -dock_state bottom -dock_on_new_line true -dock_extent 171]
+gui_update_layout -id ${DLPane.1} {{left 0} {top 0} {width 587} {height 504} {dock_state left} {dock_on_new_line true} {child_data_colvariable 218} {child_data_colvalue 200} {child_data_coltype 185} {child_data_col1 0} {child_data_col2 1} {child_data_col3 2}}
+set Console.1 [gui_create_window -type Console -parent ${TopLevel.1} -dock_state bottom -dock_on_new_line true -dock_extent 169]
 gui_set_window_pref_key -window ${Console.1} -key dock_width -value_type integer -value 1849
-gui_set_window_pref_key -window ${Console.1} -key dock_height -value_type integer -value 171
+gui_set_window_pref_key -window ${Console.1} -key dock_height -value_type integer -value 169
 gui_set_window_pref_key -window ${Console.1} -key dock_offset -value_type integer -value 0
-gui_update_layout -id ${Console.1} {{left 0} {top 0} {width 1848} {height 170} {dock_state bottom} {dock_on_new_line true}}
+gui_update_layout -id ${Console.1} {{left 0} {top 0} {width 1844} {height 168} {dock_state bottom} {dock_on_new_line true}}
 #### Start - Readjusting docked view's offset / size
 set dockAreaList { top left right bottom }
 foreach dockArea $dockAreaList {
@@ -154,7 +166,7 @@ if {![gui_exist_window -window TopLevel.2]} {
 } else { 
     set TopLevel.2 TopLevel.2
 }
-gui_show_window -window ${TopLevel.2} -show_state maximized -rect {{0 28} {1852 1052}}
+gui_show_window -window ${TopLevel.2} -show_state maximized -rect {{74 102} {1919 1117}}
 
 # ToolBar settings
 gui_set_toolbar_attributes -toolbar {TimeOperations} -dock_state top
@@ -190,9 +202,7 @@ gui_set_toolbar_attributes -toolbar {Grid} -offset 0
 gui_show_toolbar -toolbar {Grid}
 gui_hide_toolbar -toolbar {Simulator}
 gui_hide_toolbar -toolbar {Interactive Rewind}
-gui_set_toolbar_attributes -toolbar {Testbench} -dock_state top
-gui_set_toolbar_attributes -toolbar {Testbench} -offset 0
-gui_show_toolbar -toolbar {Testbench}
+gui_hide_toolbar -toolbar {Testbench}
 
 # End ToolBar settings
 
@@ -202,7 +212,7 @@ gui_sync_global -id ${TopLevel.2} -option true
 # MDI window settings
 set Wave.1 [gui_create_window -type {Wave}  -parent ${TopLevel.2}]
 gui_show_window -window ${Wave.1} -show_state maximized
-gui_update_layout -id ${Wave.1} {{show_state maximized} {dock_state undocked} {dock_on_new_line false} {child_wave_left 537} {child_wave_right 1310} {child_wave_colname 266} {child_wave_colvalue 266} {child_wave_col1 0} {child_wave_col2 1}}
+gui_update_layout -id ${Wave.1} {{show_state maximized} {dock_state undocked} {dock_on_new_line false} {child_wave_left 535} {child_wave_right 1305} {child_wave_colname 265} {child_wave_colvalue 266} {child_wave_col1 0} {child_wave_col2 1}}
 
 # End MDI window settings
 
@@ -220,6 +230,12 @@ gui_update_statusbar_target_frame ${TopLevel.2}
 
 #<Database>
 
+# DVE Open design session: 
+
+if { ![gui_is_db_opened -db {Proj2.vpd}] } {
+	gui_open_db -design V1 -file Proj2.vpd -nosource
+}
+gui_set_precision 10ps
 gui_set_time_units 10ps
 #</Database>
 
@@ -238,13 +254,37 @@ gui_set_time_units 10ps
 gui_load_child_values {TestHarness}
 
 
-set _session_group_1 Group1
+set _session_group_1 {clock, reset and trace counter}
 gui_sg_create "$_session_group_1"
-set Group1 "$_session_group_1"
+set {clock, reset and trace counter} "$_session_group_1"
 
 gui_sg_addsignal -group "$_session_group_1" { TestHarness.clk TestHarness.reset TestHarness.trace_count }
 gui_set_radix -radix {decimal} -signals {V1:TestHarness.trace_count}
 gui_set_radix -radix {unsigned} -signals {V1:TestHarness.trace_count}
+
+set _session_group_2 {cmd interface}
+gui_sg_create "$_session_group_2"
+set {cmd interface} "$_session_group_2"
+
+gui_sg_addsignal -group "$_session_group_2" { TestHarness.cmd_ready TestHarness.cmd_valid TestHarness.cmd_bits_inst_funct TestHarness.cmd_bits_inst_rs1 TestHarness.cmd_bits_inst_rs2 TestHarness.cmd_bits_inst_xd TestHarness.cmd_bits_inst_xs1 TestHarness.cmd_bits_inst_xs2 TestHarness.cmd_bits_inst_rd TestHarness.cmd_bits_inst_opcode TestHarness.cmd_bits_rs1 TestHarness.cmd_bits_rs2 }
+
+set _session_group_3 {resp interface}
+gui_sg_create "$_session_group_3"
+set {resp interface} "$_session_group_3"
+
+gui_sg_addsignal -group "$_session_group_3" { TestHarness.resp_ready TestHarness.resp_valid TestHarness.resp_bits_rd TestHarness.resp_bits_data }
+
+set _session_group_4 {mem req interface}
+gui_sg_create "$_session_group_4"
+set {mem req interface} "$_session_group_4"
+
+gui_sg_addsignal -group "$_session_group_4" { TestHarness.mem_req_ready TestHarness.mem_req_valid TestHarness.mem_req_bits_addr TestHarness.mem_req_bits_tag TestHarness.mem_req_bits_phys TestHarness.mem_req_bits_cmd TestHarness.mem_req_bits_size TestHarness.mem_req_bits_data TestHarness.mem_req_bits_signed TestHarness.mem_req_bits_mask }
+
+set _session_group_5 {mem resp interface}
+gui_sg_create "$_session_group_5"
+set {mem resp interface} "$_session_group_5"
+
+gui_sg_addsignal -group "$_session_group_5" { TestHarness.mem_resp_valid TestHarness.mem_resp_bits_addr TestHarness.mem_resp_bits_tag TestHarness.mem_resp_bits_cmd TestHarness.mem_resp_bits_size TestHarness.mem_resp_bits_data TestHarness.mem_resp_bits_signed TestHarness.mem_resp_bits_mask TestHarness.mem_resp_bits_replay TestHarness.mem_resp_bits_has_data TestHarness.mem_resp_bits_data_raw TestHarness.mem_resp_bits_store_data }
 
 # Global: Highlighting
 
@@ -288,8 +328,8 @@ gui_list_set_filter -id ${Data.1} -list { {Buffer 1} {Input 1} {Others 1} {Linka
 gui_list_set_filter -id ${Data.1} -text {*}
 gui_list_show_data -id ${Data.1} {TestHarness}
 gui_show_window -window ${Data.1}
-catch { gui_list_select -id ${Data.1} {TestHarness.trace_count }}
-gui_view_scroll -id ${Data.1} -vertical -set 493
+catch { gui_list_select -id ${Data.1} {TestHarness.mem_resp_bits_size }}
+gui_view_scroll -id ${Data.1} -vertical -set 480
 gui_view_scroll -id ${Data.1} -horizontal -set 0
 gui_view_scroll -id ${Hier.1} -vertical -set 0
 gui_view_scroll -id ${Hier.1} -horizontal -set 0
@@ -297,7 +337,7 @@ gui_view_scroll -id ${Hier.1} -horizontal -set 0
 # Source 'Source.1'
 gui_src_value_annotate -id ${Source.1} -switch false
 gui_set_env TOGGLE::VALUEANNOTATE 0
-gui_open_source -id ${Source.1}  -replace -active TestHarness
+gui_open_source -id ${Source.1}  -replace -active TestHarness ../vsrc/TestHarness.v
 gui_view_scroll -id ${Source.1} -vertical -set 0
 gui_src_set_reusable -id ${Source.1}
 
@@ -311,8 +351,11 @@ set origGroupCreationState [gui_list_create_group_when_add -wave]
 gui_list_create_group_when_add -wave -disable
 gui_marker_set_ref -id ${Wave.1}  C1
 gui_wv_zoom_timerange -id ${Wave.1} 0 1720
-gui_list_add_group -id ${Wave.1} -after {New Group} {Group1}
-gui_list_select -id ${Wave.1} {TestHarness.trace_count }
+gui_list_add_group -id ${Wave.1} -after {New Group} {{clock, reset and trace counter}}
+gui_list_add_group -id ${Wave.1} -after {New Group} {{cmd interface}}
+gui_list_add_group -id ${Wave.1} -after {New Group} {{resp interface}}
+gui_list_add_group -id ${Wave.1} -after {New Group} {{mem req interface}}
+gui_list_add_group -id ${Wave.1} -after {New Group} {{mem resp interface}}
 gui_seek_criteria -id ${Wave.1} {Any Edge}
 
 
@@ -328,21 +371,21 @@ if { $groupExD } {
 }
 gui_list_set_filter -id ${Wave.1} -list { {Buffer 1} {Input 1} {Others 1} {Linkage 1} {Output 1} {Parameter 1} {All 1} {Aggregate 1} {LibBaseMember 1} {Event 1} {Assertion 1} {Constant 1} {Interface 1} {BaseMembers 1} {Signal 1} {$unit 1} {Inout 1} {Variable 1} }
 gui_list_set_filter -id ${Wave.1} -text {*}
-gui_list_set_insertion_bar  -id ${Wave.1} -group Group1  -position in
+gui_list_set_insertion_bar  -id ${Wave.1} -group {New Group} -position in
 
 gui_marker_move -id ${Wave.1} {C1} 62
 gui_view_scroll -id ${Wave.1} -vertical -set 0
 gui_show_grid -id ${Wave.1} -enable false
 # Restore toplevel window zorder
 # The toplevel window could be closed if it has no view/pane
-if {[gui_exist_window -window ${TopLevel.2}]} {
-	gui_set_active_window -window ${TopLevel.2}
-	gui_set_active_window -window ${Wave.1}
-}
 if {[gui_exist_window -window ${TopLevel.1}]} {
 	gui_set_active_window -window ${TopLevel.1}
 	gui_set_active_window -window ${Source.1}
 	gui_set_active_window -window ${DLPane.1}
+}
+if {[gui_exist_window -window ${TopLevel.2}]} {
+	gui_set_active_window -window ${TopLevel.2}
+	gui_set_active_window -window ${Wave.1}
 }
 #</Session>
 

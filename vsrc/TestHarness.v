@@ -6,14 +6,15 @@ module TestHarness;
   wire        cmd_ready;
   reg         cmd_valid;
   reg [6:0]	  cmd_bits_inst_funct;
-  reg [4:0]   cmd_bits_inst_rs2;
   reg [4:0]   cmd_bits_inst_rs1;
+  reg [4:0]   cmd_bits_inst_rs2;
   reg		      cmd_bits_inst_xd;
   reg		      cmd_bits_inst_xs1;
   reg		      cmd_bits_inst_xs2;
   reg [4:0]	  cmd_bits_inst_rd;
   reg [6:0]	  cmd_bits_inst_opcode;
   reg [63:0]  cmd_bits_rs1;
+  reg [63:0]  cmd_bits_rs2;
 
   // PROC RESP Interface
 
@@ -126,38 +127,43 @@ module TestHarness;
     .mem_req_ready(mem_req_ready),
     .mem_req_valid(mem_req_valid),
     .mem_req_bits_addr(mem_req_bits_addr),
+    .mem_req_bits_tag(mem_req_bits_tag),
+    .mem_req_bits_phys(mem_req_bits_phys),
     .mem_req_bits_cmd(mem_req_bits_cmd),
     .mem_req_bits_size(mem_req_bits_size),
     .mem_req_bits_data(mem_req_bits_data),
+    .mem_req_bits_signed(mem_req_bits_signed),
+    .mem_req_bits_mask(mem_req_bits_mask),
 
     // MEM RESP Interface
 
     .mem_resp_valid(mem_resp_valid),
     .mem_resp_bits_addr(mem_resp_bits_addr),
+    .mem_resp_bits_tag(mem_resp_bits_tag),
     .mem_resp_bits_cmd(mem_resp_bits_cmd),
     .mem_resp_bits_size(mem_resp_bits_size),
-    .mem_resp_bits_data(mem_resp_bits_data)
+    .mem_resp_bits_data(mem_resp_bits_data),
+    .mem_resp_bits_signed(mem_resp_bits_signed),
+    .mem_resp_bits_mask(mem_resp_bits_mask),
+    .mem_resp_bits_replay(mem_resp_bits_replay),
+    .mem_resp_bits_has_data(mem_resp_bits_has_data),
+    .mem_resp_bits_data_raw(mem_resp_bits_data_raw),
+    .mem_resp_bits_store_data(mem_resp_bits_store_data)
   );
 
-  logic [5:0]   a, k;
-  logic [6:0]   M,  N;
-  logic         bitwidth; 
-  logic [1:0]   actfun;
-  logic [39:0]	Waddr, Xaddr, Raddr;
-  logic [63:0]	R[63:0];
+  logic [39:0]	src_addr, dst_addr;
   logic 	go;
   logic [4:0]	  resp_bits_rd_r;
   logic [63:0]	resp_bits_data_r;
   logic [63:0]	trace_count;
   logic [255:0] desc;
 
-  logic [15:0]  exp_subword, exp_result;
-  logic [15:0]  asic_subword, asic_result;
-  logic [63:0]  asic_word;
+  logic [63:0] asic_result;
+  logic [63:0] exp_result;
 
   integer i;
-
-  logic [63:0] wblocks, xblocks, rblocks;
+  integer rsize = 1;
+  integer csize = 1025;
 
   reg exit, fail;
   reg [1023:0] 	vcdplusfile = 0;
@@ -170,37 +176,8 @@ module TestHarness;
  
   `include "Proc.vfrag"
 
-  assign exp_subword  = R[i]>>a;
-  assign asic_word = extmem.sram.mem[(Raddr>>3) + (i / (k ? k : bitwidth ? 4 : 8))];
-
-  always_comb
-  begin
-    if (bitwidth)
-    begin
-      case (actfun)
-        2'b00 : exp_result = exp_subword[15:0];
-        2'b01 : exp_result = exp_subword[15] == 1 ? 0 : exp_subword[15:0];
-        2'b10 : exp_result = $tanh(exp_subword[15] == 1 ? 0 : exp_subword[15:0]);
-        default : exp_result = 16'hxxxx;
-      endcase
-    end
-    else
-    begin
-      case (actfun)
-        2'b00 : exp_result = exp_subword[7:0];
-        2'b01 : exp_result = exp_subword[7] == 1 ? 0 : exp_subword[7:0];
-        2'b10 : exp_result = $tanh(exp_subword[7] == 1 ? 0 : exp_subword[7:0]);
-        default : exp_result = 8'hxxxx;
-      endcase
-    end
-  end
-
-  assign asic_subword = asic_word>>((i % (k ? k : bitwidth ? 4 : 8))*(bitwidth ? 16 : 8));
-  assign asic_result = bitwidth ? asic_subword[15:0] : asic_subword[7:0];
-
-  assign wblocks = k ? ((M*N) % k) != 0 ? (M*N) / k + 1 : (M*N) / k : ((M*N) % (bitwidth ? 4 : 8)) != 0 ? (M*N) / (bitwidth ? 4 : 8) + 1 : (M*N) / (bitwidth ? 4 : 8);
-  assign xblocks = k ? (N % k) != 0 ? N / k + 1 : N / k : (N % (bitwidth ? 4 : 8)) != 0 ? N / (bitwidth ? 4 : 8) + 1 : N / (bitwidth ? 4 : 8);
-  assign rblocks = k ? (M % k) != 0 ? M / k + 1 : M / k : (M % (bitwidth ? 4 : 8)) != 0 ? M / (bitwidth ? 4 : 8) + 1 : M / (bitwidth ? 4 : 8);
+  assign asic_result = extmem.sram.mem[i];
+  assign exp_result = 64'h0;
 
   initial
   begin
@@ -223,18 +200,15 @@ module TestHarness;
 
     // Unit Tests
     //
-    // run_test(element bitwidth, activation function, a, k, M, N)
+    // run_test(src_addr, dst_addr)
     //
     // Argument             Type            Values
     // --------------------------------------------------------------
-    // element bitwidth     boolean         0 -> 8 bits, 1 -> 16 bits
-    // activation function  logic [1:0]     0 -> SWS, 1 -> ReLU, 2 -> arctan
-    // a                    logic [6:0]     0 - 24
-    // k                    logic [6:0]     0 - 7
-    // M                    logic [6:0]     1 - 64
-    // N                    logic [6:0]     1 - 64
+    // src_addr             logic [39:0]    40-bit address of scores
+    // dst_addr             logic [39:0]    40-bit address of output
+     
 
-    run_test(0, 0, 0, 1, 1, 1);
+    run_test(0, 0);
 
 `ifdef DEBUG
   $vcdplusclose;
@@ -291,7 +265,7 @@ module TestHarness;
       $display("-------------------------------------");
       $display("address       data                   ");
       $display("-------------------------------------");
-      for (i = 0; i < (wblocks + xblocks + rblocks); i = i + 1)
+      for (i = 0; i < (8); i = i + 1)
         #2 $display("%-14h%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h_%1h%1h", i*8, 
                                     extmem.sram.mem[i][63:60],
                                     extmem.sram.mem[i][59:56],
@@ -322,21 +296,15 @@ module TestHarness;
 
   task run_test
   (
-    input logic  	arg1,
-    input logic [1:0] 	arg2,
-    input logic [6:0] 	arg3,
-    input logic [6:0] 	arg4,
-    input logic [7:0] 	arg5,
-    input logic [7:0] 	arg6
+    input logic [39:0]  arg1,
+    input logic [39:0] 	arg2
   );
   begin
-    $readmemb("ExtMem.bin", extmem.sram.mem);
+    //$readmemb("ExtMem.bin", extmem.sram.mem);
     if (verbose)
-        $display("\nTest Parameters: bitwidth=%0d actfun=%0d a=%0d k'=%0d M=%0d N=%0d\n", arg1 ? 16 : 8, arg2, arg3, arg4, arg5, arg6);
+        $display("\nTest Parameters: N/A\n");
 
-    #2 bitwidth = arg1; actfun = arg2;
-    #2 a = arg3; k = arg4; M = arg5; N = arg6; 
-    #2 Waddr = 40'h0; Xaddr = Waddr + (wblocks) << 3; Raddr = Xaddr + (xblocks << 3);
+    #2 src_addr = arg1; dst_addr = arg2;
 
     #2 reset = 1'b1;
     #2 go = 1;
@@ -346,7 +314,7 @@ module TestHarness;
     #4 $display("Finished.");
 
     $display("\nResults:\n");
-    $readmemb("R.bin", R); #2;
+    //$readmemb("R.bin", R); #2;
 
     if (resp_bits_rd_r !== 5'h1 || resp_bits_data_r !== 64'h1)
     begin
@@ -356,7 +324,7 @@ module TestHarness;
     end
     else
     begin
-      for (i = 0; i < M; i = i + 1)
+      for (i = 0; i < csize * rsize; i = i + 1)
       begin
         #2;
         if (exp_result !== asic_result)
