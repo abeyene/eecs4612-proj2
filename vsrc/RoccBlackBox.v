@@ -1,57 +1,6 @@
-//---------------------------------------------------------
-//  File:   Asic.v
-//  Author: Abel Beyene
-//  Date:   March 6, 2023
-//
-//  Description:
-//
-//  Top-level module for Ali's Decoder
-//  
-//  Interface:  
-//  
-//  Name                          I/O     Width     Description
-//  ----------------------------------------------------------------------
-//  clock                         input   1         clock
-//  reset                         input   1         reset
-//  rocc_cmd_ready                output  1         control
-//  rocc_cmd_valid                input   1         control
-//  rocc_cmd_inst_funct           input   7         function code
-//  rocc_cmd_inst_rs2             input   5         rs2 register
-//  rocc_cmd_inst_rs1             input   5         rs1 register
-//  rocc_cmd_inst_xd              input   1         valid rd
-//  rocc_cmd_inst_xrs1            input   1         valid rs2
-//  rocc_cmd_inst_xrs2            input   1         valid rs1
-//  rocc_cmd_inst_rd              input   5         rd register
-//  rocc_cmd_inst_opcode          input   7         opcode
-//  rocc_cmd_rs1                  input   64        rs1 data
-//  rocc_mem_req_ready            input   1         control
-//  rocc_mem_req_valid            input   1         control
-//  rocc_mem_req_bits_addr        output  32        memory address
-//  rocc_mem_req_bits_tag         output  8         memory address tag
-//  rocc_mem_req_bits_phys        output  1         physical or virtual address
-//  rocc_mem_req_bits_cmd         output  5         memory operation
-//  rocc_mem_req_bits_size        output  2         operation size
-//  rocc_mem_req_bits_data        output  64        operation data
-//  rocc_mem_req_bits_signed      output  1         signed or unsigned data
-//  rocc_mem_req_bits_mask        output  8         operation data mask
-//  rocc_mem_resp_ready           input   1         control
-//  rocc_mem_resp_valid           output  1         control
-//  rocc_mem_resp_bits_addr       output  32        memory address
-//  rocc_mem_resp_bits_tag        output  8         memory address tag
-//  rocc_mem_resp_bits_cmd        output  5         memory operation
-//  rocc_mem_resp_bits_size       output  2         operation size
-//  rocc_mem_resp_bits_data       output  64        operation data
-//  rocc_mem_resp_bits_signed     output  1         signed or unsigned data
-//  rocc_mem_resp_bits_mask       output  8         operation data mask
-//  rocc_mem_resp_bits_replay     output  8         
-//  rocc_mem_resp_bits_has_data   output  8         
-//  rocc_mem_resp_bits_store_data output  8         
-//  rocc_mem_resp_bits_data_raw   output  8        
-//-------------------------------------------------------------------------
+// See LICENSE.SiFive for license details.
 
-`include "AsicDefines.vh"
-
-module Asic
+module RoccBlackBox
   #( parameter xLen = 64,
      PRV_SZ = 2,
      coreMaxAddrBits = 40,
@@ -214,9 +163,84 @@ module Asic
     input [fLen:0] rocc_fpu_resp_bits_data,
     input [FPConstants_FLAGS_SZ-1:0] rocc_fpu_resp_bits_exc );
 
-  // ************ PUT YOUR RTL HERE ************ //
-    wire [1:0] temp;
-    assign temp = {1'b1, 1'b1} & {1'bz, 1'bz};
+  assign rocc_cmd_ready = 1'b1;
+
+  assign rocc_mem_req_valid = 1'b0;
+  assign rocc_mem_s1_kill = 1'b0;
+  assign rocc_mem_s2_kill = 1'b0;
+
+  assign rocc_busy = 1'b0;
+  assign rocc_interrupt = 1'b0;
+
+  assign rocc_fpu_req_valid = 1'b0;
+  assign rocc_fpu_resp_ready = 1'b1;
+
+  /* Accumulate rs1 and rs2 into an accumulator */
+  reg doResp;
+  reg [4:0] rocc_cmd_bits_inst_rd_r;
+  reg [xLEN-1:0] seq1_addr;
+  reg [xLEN-1:0] seq2_addr;
+
+  always @ (posedge clock) begin
+    if (reset) begin
+      doResp <= 1'b0;
+      rocc_cmd_bits_inst_rd_d <= 5'b0;
+      state <= IDLE:
+    end
+    else
+    begin
+      doResp                  <= rocc_cmd_bits_inst_xd;
+      rocc_cmd_bits_inst_rd_d <= rocc_cmd_bits_inst_rd;
+      state <= state_n:
+      if (state == IDLE)
+        seq1_addr 
+    end
+    else begin
+      doResp <= 1'b0;
+    end
+  end
+
+  always_comb
+  begin
+    case (state)
+      IDLE :
+        if (rocc_cmd_valid && rocc_cmd_ready):
+           state_n = CMD_INIT;
+      CMD_SEQ1_ADDR
+  end
+
+  assign rocc_resp_valid = doResp;
+  assign rocc_resp_bits_rd = rocc_cmd_bits_inst_rd_d;
+  assign rocc_resp_bits_data = acc;
+
+  typedef enum logic [3:0] {IDLE, WAIT, CMD_SEQ1_ADDR, CMD_SEQ1_LEN, CMD_SEQ2_ADDR, CMD_SEQ2_LEN, CALCULATE} state_t;
+
+  state_t state, state_n, state_p;
+
+
+  input         clock,
+  input         reset,
+  input         io_start,
+  input  [15:0] io_str1,
+  input  [15:0] io_str1_len,
+  input  [15:0] io_str2,
+  input  [15:0] io_str2_len,
+  output [3:0]  io_result,
+  output        io_result_ready
+
+
+  Toplevel edit_distance_calculator
+              (.clock(clock)
+              ,.reset(reset)
+              ,.io_start()
+              ,.io_str1()
+              ,.io_str1_len()
+              ,.io_str2()
+              ,.io_str2_len()
+              ,.io_result()
+              ,.io_result_ready()
+              );
+
 endmodule
 
 module SRAM2P(
